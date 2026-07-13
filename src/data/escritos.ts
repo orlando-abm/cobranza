@@ -89,7 +89,7 @@ const blank = `
 <h2 style="text-align:center">EN LO PRINCIPAL: [Suma del escrito]</h2>
 <p style="text-align:justify">S.J.L. en lo Civil</p>
 <p style="text-align:justify"><b>ESTUDIO CID &amp; ASOCIADOS</b>, por la parte que represento, a US. digo:</p>
-<p style="text-align:justify">[Redactá acá el escrito. El agente dejó el encabezado y los antecedentes de la causa cargados; el contenido de la defensa lo decidís y redactás vos.]</p>
+<p style="text-align:justify">[Redacta aquí el escrito. El agente dejó el encabezado y los antecedentes de la causa cargados; el contenido de la defensa lo decides y redactas tú.]</p>
 <p style="text-align:justify"><b>POR TANTO,</b> RUEGO A US.: [petición concreta].</p>
 `;
 

@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import Icon, { type IconName } from './Icon';
+import Tooltip from './Tooltip';
 import { useAppStore } from '../store/useAppStore';
 
 interface Props {
@@ -8,6 +9,8 @@ interface Props {
   /** HTML inicial de la plantilla (se ignora si ya hay un borrador guardado). */
   body: string;
   onClose: () => void;
+  /** CTA contextual opcional en la barra superior (ej. "Marcar corregida" / "Ingresar causa"). */
+  action?: { label: string; icon?: IconName; onClick: () => void };
 }
 
 const fonts = ['Times New Roman', 'Arial'];
@@ -19,7 +22,7 @@ const sizes = [
   { label: '14', v: '5' },
 ];
 
-export default function EscritoEditor({ escritoId, title, body, onClose }: Props) {
+export default function EscritoEditor({ escritoId, title, body, onClose, action }: Props) {
   const saveEscritoDraft = useAppStore((s) => s.saveEscritoDraft);
   const savedDraft = useAppStore((s) => s.escritosDrafts[escritoId]);
   const pushToast = useAppStore((s) => s.pushToast);
@@ -43,15 +46,16 @@ export default function EscritoEditor({ escritoId, title, body, onClose }: Props
   }
 
   const ToolBtn = ({ command, value, icon, label }: { command: string; value?: string; icon: IconName; label: string }) => (
-    <button
-      className="tool-btn"
-      title={label}
-      aria-label={label}
-      onMouseDown={(e) => e.preventDefault()}
-      onClick={() => cmd(command, value)}
-    >
-      <Icon name={icon} size={16} />
-    </button>
+    <Tooltip label={label}>
+      <button
+        className="tool-btn"
+        aria-label={label}
+        onMouseDown={(e) => e.preventDefault()}
+        onClick={() => cmd(command, value)}
+      >
+        <Icon name={icon} size={16} />
+      </button>
+    </Tooltip>
   );
 
   return (
@@ -60,8 +64,13 @@ export default function EscritoEditor({ escritoId, title, body, onClose }: Props
         <div className="escrito-topbar">
           <div className="escrito-title"><Icon name="file" size={17} />{title}</div>
           <div className="escrito-top-actions">
-            <button className="btn btn-primary btn-sm" onClick={save}><Icon name="check" />Guardar</button>
-            <button className="btn btn-ghost btn-sm" onClick={() => pushToast('ok', 'Descargando Word… (.docx)')}><Icon name="file" />Word</button>
+            {action && (
+              <button className="btn btn-primary btn-sm" onClick={action.onClick}>
+                {action.icon && <Icon name={action.icon} />}{action.label}
+              </button>
+            )}
+            <button className={`btn btn-sm ${action ? 'btn-ghost' : 'btn-primary'}`} onClick={save}><Icon name="check" />Guardar</button>
+            <button className="btn btn-ghost btn-sm" onClick={() => pushToast('ok', 'Descargando Word (.docx)…')}><Icon name="file" />Word</button>
             <button className="btn btn-ghost btn-sm" onClick={() => pushToast('ok', 'Descargando PDF…')}><Icon name="file" />PDF</button>
             <button className="btn btn-ghost btn-sm" onClick={onClose}><Icon name="x" />Cerrar</button>
           </div>

@@ -56,7 +56,7 @@ const weeks: Week[] = [
       },
       {
         label: 'Diseño', tickets: [
-          { id: 'DIS-01', title: 'Design system ProdBooster', desc: 'Tokens Indigo/Violeta, Poppins, componentes base y los tres tratamientos de autonomía.', size: 'M' },
+          { id: 'DIS-01', title: 'Design system ProdBooster', desc: 'Tokens Navy/Latón (Tribunal), Fraunces/Inter, componentes base y los tres tratamientos de autonomía.', size: 'M' },
           { id: 'DIS-02', title: 'Pantallas de ingesta y validación en alta fidelidad', desc: 'Espacio de operación previo a la causa.', size: 'M' },
         ],
       },
@@ -186,7 +186,7 @@ export default function Backlog() {
       </div>
 
       {weeks.map((w) => (
-        <div className="week-block" key={w.num} style={w.num === 2 ? { background: '#FBFAFE' } : undefined}>
+        <div className="week-block" key={w.num} style={w.num === 2 ? { background: '#FBF9F3' } : undefined}>
           <div className="week-title">
             <div className="week-num" style={w.color ? { background: w.color } : undefined}>{w.num}</div>
             <div><div className="wt">{w.title}</div><div className="ws">{w.sub}</div></div>

@@ -27,6 +27,16 @@ export interface TimelineItem {
 
 export type MsgRole = 'agent' | 'user';
 
+export type PlanStepStatus = 'pending' | 'in-progress' | 'completed' | 'need-help' | 'failed';
+
+export interface AgentPlanStep {
+  id: string;
+  title: string;
+  description?: string;
+  status: PlanStepStatus;
+  tools?: string[];
+}
+
 export interface ChatMessage {
   id: string;
   role: MsgRole;
@@ -34,6 +44,11 @@ export interface ChatMessage {
   time: string;
   doc?: string;
   typing?: boolean;
+  /** Plan animado del procurador mientras trabaja (Agent Plan). */
+  plan?: {
+    title: string;
+    steps: AgentPlanStep[];
+  };
   proposal?: {
     tag: string;
     text: string;
@@ -196,8 +211,15 @@ export interface Toast {
   text: string;
 }
 
-/** FB-01 · La demanda es una entidad previa a la causa: la causa nace recién al subir al PJUD. */
-export type DemandaStatus = 'redactada' | 'lista' | 'subida' | 'suspendida';
+/**
+ * Etapa 1 · La demanda es una entidad previa a la causa (la causa nace al presentar en el PJUD).
+ * Solo dos estados: 'revisar' (la validación la marcó mal) y 'redactada' (quedó bien, lista para ingresar la causa).
+ * Al ingresar la causa la demanda se convierte en Causa y sale del listado de demandas.
+ */
+export type DemandaStatus = 'revisar' | 'redactada';
+
+/** Motivo por el que la validación documental marcó la demanda para corrección humana (spec §Validación Documental). */
+export type RevisarReason = 'incompleta' | 'transferido' | 'ocr';
 
 export interface Demanda {
   id: string;
@@ -209,18 +231,18 @@ export interface Demanda {
   status: DemandaStatus;
   /** Plantilla GLOBAL seleccionada según deudor/jurisdicción. */
   template: string;
-  /** Enlace a la causa cuando la demanda ya se subió y nació la causa. */
-  causaId?: string;
-  /** Crédito que ya existió el mes anterior — habilita reusar la demanda previa. */
-  recurrent?: boolean;
+  /** Si status = 'revisar': por qué quedó mal (incompleta / vehículo transferido / OCR bajo umbral). */
+  revisarReason?: RevisarReason;
 }
 
-/** FB-08 · Paso de ingesta que se muestra en vivo mientras se procesa el lote. */
+/** Etapa 1 · Paso de ingesta que se muestra en vivo mientras se crean las demandas del lote. */
 export interface IngestStep {
   id: string;
   doc: string;
   status: 'leyendo' | 'validada' | 'revision' | 'error';
   detail?: string;
+  /** Si no quedó validada, motivo de corrección con el que nace la demanda en estado 'revisar'. */
+  reason?: RevisarReason;
 }
 
 /** FB-06 · Recordatorio interno (NO es un plazo legal). Aparece en el Inicio cuando vence. */

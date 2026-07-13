@@ -31,7 +31,7 @@ export default function Welcome() {
       </div>
       <h1>Hola Cristóbal, soy tu procurador</h1>
       <p>
-        Cargá el lote de causas que te asignó la financiera y yo las leo, valido los
+        Carga el lote de causas que te asignó la financiera y yo las leo, valido los
         documentos y te armo las demandas. ¿Con qué empezamos?
       </p>
 
@@ -43,7 +43,7 @@ export default function Welcome() {
       >
         <Icon name="message" size={20} style={{ color: 'var(--muted-2)' }} />
         <input
-          placeholder="Pedime algo, o arrastrá acá un ZIP con las causas…"
+          placeholder="Pídeme algo, o arrastra aquí un ZIP con las causas…"
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && submit()}

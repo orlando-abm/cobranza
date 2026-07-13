@@ -2,8 +2,10 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Modal from './Modal';
 import Icon from './Icon';
+import AgentPlan, { advancePlan, completePlan } from './AgentPlan';
 import { useAppStore } from '../store/useAppStore';
-import type { BatchMetric } from '../types';
+import { embargosPlan, registroPlan, toPendingPlan } from '../data/flows';
+import type { AgentPlanStep, BatchMetric } from '../types';
 
 const verbs: Record<BatchMetric['flow'], { running: string; done: string; doneShort: string; cta: string }> = {
   embargos: { running: 'Escribiendo al receptor', done: 'Embargos encargados', doneShort: 'Encargado', cta: 'Encargar los embargos listos' },
@@ -22,9 +24,11 @@ export default function BatchFlowModal({ metric, onClose }: { metric: BatchMetri
   const [running, setRunning] = useState(false);
   const [doneCount, setDoneCount] = useState(0);
   const [finished, setFinished] = useState(false);
+  const [planSteps, setPlanSteps] = useState<AgentPlanStep[]>([]);
   const timers = useRef<number[]>([]);
   const v = verbs[metric.flow];
   const isRegistro = metric.flow === 'registro';
+  const planDef = isRegistro ? registroPlan : embargosPlan;
 
   const ready = useMemo(() => metric.items.filter((i) => !i.blocked), [metric.items]);
   const blocked = useMemo(() => metric.items.filter((i) => i.blocked), [metric.items]);
@@ -49,15 +53,27 @@ export default function BatchFlowModal({ metric, onClose }: { metric: BatchMetri
   function run() {
     if (!ready.length) return;
     setRunning(true);
+    const base = toPendingPlan(planDef.steps);
+    setPlanSteps(advancePlan(base, 0));
+
+    const planMs = 420;
+    base.forEach((_, i) => {
+      if (i === 0) return;
+      timers.current.push(window.setTimeout(() => {
+        setPlanSteps(advancePlan(base, i));
+      }, i * planMs));
+    });
+
+    const itemsStart = base.length * planMs;
     ready.forEach((_, i) => {
-      const id = window.setTimeout(() => {
+      timers.current.push(window.setTimeout(() => {
         setDoneCount(i + 1);
         if (i === ready.length - 1) {
+          setPlanSteps(completePlan(base));
           setFinished(true);
           finishToast();
         }
-      }, 450 * (i + 1));
-      timers.current.push(id);
+      }, itemsStart + 450 * (i + 1)));
     });
   }
 
@@ -83,6 +99,12 @@ export default function BatchFlowModal({ metric, onClose }: { metric: BatchMetri
       }
     >
       <p style={{ fontSize: 14, color: 'var(--muted)', marginBottom: 16 }}>{metric.sub}</p>
+
+      {(running || finished) && planSteps.length > 0 && (
+        <div style={{ marginBottom: 16 }}>
+          <AgentPlan title={planDef.title} steps={planSteps} compact />
+        </div>
+      )}
 
       {finished && isRegistro && (
         <div className="note" style={{ margin: '0 0 16px' }}>

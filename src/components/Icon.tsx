@@ -6,13 +6,14 @@ export type IconName =
   | 'folders' | 'plus' | 'info' | 'search' | 'triangle' | 'activity' | 'send'
   | 'xCircle' | 'table' | 'spinner' | 'signature' | 'clipboard' | 'building'
   | 'users' | 'chart' | 'x' | 'settings' | 'mail' | 'car' | 'scale' | 'eye'
-  | 'pause' | 'play' | 'trash' | 'more'
+  | 'pause' | 'play' | 'trash' | 'more' | 'menu'
   | 'bold' | 'italic' | 'underline' | 'alignLeft' | 'alignCenter' | 'alignRight'
   | 'alignJustify' | 'listOrdered' | 'listBullet' | 'bell' | 'note';
 
 const paths: Record<IconName, React.ReactNode> = {
   home: <path d="M3 12l9-9 9 9M5 10v10h14V10" />,
   grid: <><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></>,
+  menu: <path d="M4 6h16M4 12h16M4 18h16" />,
   message: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />,
   bolt: <path d="M13 2L3 14h9l-1 8 10-12h-9z" />,
   checkSquare: <><path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" /></>,

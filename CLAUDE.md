@@ -1,0 +1,31 @@
+# ProdBooster · Cobranza Judicial — reglas del proyecto
+
+Front (solo frontend) del agente de cobranza judicial para estudios jurídicos. React 19 + TS + Vite + Zustand.
+
+## Copy / idioma — regla dura
+
+- **Nunca usar voseo (rioplatense).** Español chileno neutro con **tuteo ("tú")** o forma impersonal.
+- Evitar imperativos voseantes (-á/-é/-í) y "podés/querés/tenés/vos".
+  - ❌ "arrastrá", "podés", "pedile", "corregí", "decime", "revisá", "elegí", "buscá", "validá", "dejá"
+  - ✅ "arrastra" / "arrastrar", "puedes", "pídele", "corrige", "indícame", "revisa", "elige", "busca", "valida", "deja"
+- Registro serio, legal, claro. Verbos en voz activa ("Guardar", no "Se guarda").
+
+## Fuente de verdad legal
+
+- El flujo legal (demandas, causas, notificación, embargo, máquina de estados, plazos, pautas, autonomía)
+  se rige por **[docs/especificacion-scraper-pjud-v3-2-corregido.md](docs/especificacion-scraper-pjud-v3-2-corregido.md)**
+  y el skill **`.claude/skills/cobranza-legal-pjud/`**. **No inventar** estados/pasos/automatizaciones que no estén ahí.
+
+## Modelo demanda ↔ causa
+
+- La **demanda** es previa a la causa y no tiene Rol. Estados: `revisar` (la validación la marcó mal) y
+  `redactada` (quedó bien). No hay estados "lista", "suspendida" ni "presentada" dentro de demandas.
+- Al **ingresar la causa** (acción "Ingresar causa") se pide el **Rol** y la demanda **se convierte en causa**
+  (sale del listado de demandas). Recién ahí arranca el reloj y el hito de facturación (5%).
+- **Todo documento generado por el agente es editable al revisar**: se abre en el **editor tipo Word**
+  (`EscritoEditor`), nunca en un visor de solo lectura.
+
+## Diseño
+
+- Identidad "Tribunal": tokens Navy/Latón (`:root` en `src/index.css`), display **Fraunces** + cuerpo **Inter**.
+- Verificar siempre: `npm run build` y `npm run lint` limpios.

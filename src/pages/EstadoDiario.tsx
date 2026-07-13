@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Icon from '../components/Icon';
+import Tooltip from '../components/Tooltip';
 import { pjudDaily, TODAY, daysFromToday } from '../data/mock';
 
 function dayLabel(day: string): string {
@@ -16,16 +17,19 @@ const tipoClass = (tipo: string) => {
   return '';
 };
 
+type SortKey = 'day' | 'rol' | 'tribunal' | 'tipo';
+
 export default function EstadoDiario() {
   const navigate = useNavigate();
   const [day, setDay] = useState<string>(TODAY);
   const [query, setQuery] = useState('');
+  const [sort, setSort] = useState<{ key: SortKey; dir: 'asc' | 'desc' }>({ key: 'day', dir: 'desc' });
 
   const days = useMemo(() => Array.from(new Set(pjudDaily.map((m) => m.day))).sort().reverse(), []);
 
   const rows = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return pjudDaily.filter((m) => {
+    const filtered = pjudDaily.filter((m) => {
       if (day !== 'all' && m.day !== day) return false;
       if (!q) return true;
       return m.rol.toLowerCase().includes(q)
@@ -33,14 +37,30 @@ export default function EstadoDiario() {
         || m.movimiento.toLowerCase().includes(q)
         || m.tipo.toLowerCase().includes(q);
     });
-  }, [day, query]);
+    const dir = sort.dir === 'asc' ? 1 : -1;
+    return [...filtered].sort((a, b) => a[sort.key].localeCompare(b[sort.key], 'es') * dir);
+  }, [day, query, sort]);
+
+  function toggleSort(key: SortKey) {
+    setSort((s) => (s.key === key ? { key, dir: s.dir === 'asc' ? 'desc' : 'asc' } : { key, dir: key === 'day' ? 'desc' : 'asc' }));
+  }
+
+  const Th = ({ k, label }: { k: SortKey; label: string }) => {
+    const active = sort.key === k;
+    return (
+      <button className={`pjud-th${active ? ' sorted' : ''}`} onClick={() => toggleSort(k)} aria-label={`Ordenar por ${label}`}>
+        {label}
+        <Icon name={active && sort.dir === 'asc' ? 'chevronRight' : 'chevronRight'} className="sort-ic" style={{ transform: active && sort.dir === 'asc' ? 'rotate(-90deg)' : 'rotate(90deg)' }} />
+      </button>
+    );
+  };
 
   return (
     <>
       <div className="head">
         <div className="brand-row"><span className="dot"><Icon name="table" /></span>Vista de respaldo · trigger check</div>
         <h1>Estado diario del PJUD</h1>
-        <div className="sub">Réplica de lo que muestra el PJUD, día por día. El feed del agente ya prioriza esto en el Inicio; acá lo cruzás en crudo.</div>
+        <div className="sub">Réplica de lo que muestra el PJUD, día por día. El feed del agente ya prioriza esto en el Inicio; aquí lo cruzas en crudo.</div>
       </div>
 
       <div className="ops-toolbar">
@@ -63,11 +83,11 @@ export default function EstadoDiario() {
       <div className="section" style={{ paddingTop: 8 }}>
         <div className="pjud-table">
           <div className="pjud-row pjud-head">
-            <span>Día</span>
-            <span>Rol</span>
+            <Th k="day" label="Día" />
+            <Th k="rol" label="Rol" />
             <span>Movimiento (leído del documento)</span>
-            <span>Tribunal</span>
-            <span>Tipo</span>
+            <Th k="tribunal" label="Tribunal" />
+            <Th k="tipo" label="Tipo" />
             <span />
           </div>
           {rows.length === 0 && (
@@ -85,7 +105,11 @@ export default function EstadoDiario() {
               <span><span className={`op-stage ${tipoClass(m.tipo)}`}>{m.tipo}</span></span>
               <span className="pjud-go">
                 {m.causaId
-                  ? <button className="btn btn-ghost btn-sm" onClick={() => navigate(`/causas/${m.causaId}`)} aria-label="Abrir causa"><Icon name="search" size={15} /></button>
+                  ? (
+                    <Tooltip label="Abrir causa">
+                      <button className="btn btn-ghost btn-sm" onClick={() => navigate(`/causas/${m.causaId}`)} aria-label="Abrir causa"><Icon name="search" size={15} /></button>
+                    </Tooltip>
+                  )
                   : <span className="pjud-nocausa" title="Sin causa en la cartera">—</span>}
               </span>
             </div>

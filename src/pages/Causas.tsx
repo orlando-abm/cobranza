@@ -27,6 +27,7 @@ export default function Causas() {
   const [filter, setFilter] = useState('all');
   const [mgmt, setMgmt] = useState<Mgmt>('active');
   const [query, setQuery] = useState('');
+  const [sortBy, setSortBy] = useState<'credito' | 'parties' | 'stage'>('credito');
 
   // Las eliminadas nunca se muestran; el filtro de gestión opera sobre el resto.
   const base = useMemo(() => causas.filter((c) => c.managementStatus !== 'deleted'), [causas]);
@@ -57,7 +58,7 @@ export default function Causas() {
 
   const rows = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return mgmtFiltered.filter((c) => {
+    const filtered = mgmtFiltered.filter((c) => {
       const matchFilter =
         filter === 'all'
           ? true
@@ -72,7 +73,8 @@ export default function Causas() {
         (c.patente?.toLowerCase().includes(q) ?? false);
       return matchFilter && matchQuery;
     });
-  }, [mgmtFiltered, filter, query]);
+    return [...filtered].sort((a, b) => a[sortBy].localeCompare(b[sortBy], 'es'));
+  }, [mgmtFiltered, filter, query, sortBy]);
 
   return (
     <>
@@ -107,6 +109,11 @@ export default function Causas() {
             {f.label} · {counts[f.id] ?? 0}
           </button>
         ))}
+        <select className="filter-select" value={sortBy} onChange={(e) => setSortBy(e.target.value as typeof sortBy)} aria-label="Ordenar causas">
+          <option value="credito">Ordenar: Crédito</option>
+          <option value="parties">Ordenar: Partes</option>
+          <option value="stage">Ordenar: Etapa</option>
+        </select>
         <div className="search-box">
           <Icon name="search" />
           <input

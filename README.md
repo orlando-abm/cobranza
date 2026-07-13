@@ -10,10 +10,23 @@ navegación real, estado y flujos agénticos simulados sobre mock data.
 - **Vite** (dev server + build)
 - **React Router** (navegación entre pantallas)
 - **Zustand** (estado global: chat, colas de firma/revisión, toasts)
+- **framer-motion** (Agent Plan animado), **cmdk** (paleta ⌘K), **@radix-ui/react-tooltip**
 
 Todo es frontend: no hay backend. Los datos viven en `src/data/` y las acciones
 (encargar embargo, firmar, validar OCR, generar informe, cargar lote) se simulan
 en el cliente con timeouts, toasts y actualización de estado.
+
+## Diseño — "Tribunal" (legal-tech)
+
+Identidad pensada para un producto **para abogados**: autoridad institucional, no SaaS genérico.
+
+- **Paleta**: navy profundo (`--indigo #0E2540`) + acento **latón/dorado** (`--brass #B0843F`)
+  sobre papel marfil (`--paper #F6F3EC`). Todo tokenizado en `:root` (sin colores crudos en componentes).
+- **Tipografía**: **Fraunces** (serif display, con carácter) en titulares + **Inter** en UI + JetBrains Mono en rol/crédito.
+- **Elemento firma**: el *Plan del procurador* (Agent Plan) con hilo de latón cosiendo los pasos, tipo expediente.
+- **Accesibilidad** (auditoría con las skills `frontend-design` + `ui-ux-pro-max`): iconos SVG (sin emojis),
+  contraste ≥ 4.5:1, foco de teclado visible, `prefers-reduced-motion`, cifras tabulares en datos.
+- **Navegación**: paleta de comandos **⌘K** (buscar causas/demandas/ir a sección) y tooltips accesibles en controles solo-icono.
 
 ## Correr el proyecto
 
@@ -47,7 +60,7 @@ src/
   pages/        Home, Welcome, Demandas, EstadoDiario, Causas, Causa, Revisiones, Informes, Config, Backlog
   store/        useAppStore.ts (Zustand: causas, demandas, recordatorios, notas, borradores…)
   types.ts      Modelo de dominio
-  index.css     Design system (tokens Indigo/Violeta, Poppins)
+  index.css     Design system "Tribunal" (tokens Navy/Latón, Fraunces + Inter)
 ```
 
 ## Fuera de alcance (igual que en el corte del MVP)

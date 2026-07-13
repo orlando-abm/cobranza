@@ -4,11 +4,12 @@ import Icon from '../components/Icon';
 import RichText from '../components/RichText';
 import Modal from '../components/Modal';
 import EscritoEditor from '../components/EscritoEditor';
+import AgentPlan, { advancePlan, completePlan } from '../components/AgentPlan';
 import { useAppStore } from '../store/useAppStore';
-import { flows, agentReply } from '../data/flows';
+import { flows, agentReply, thinkingPlan, toPendingPlan } from '../data/flows';
 import { escritoFor, type EscritoTemplate } from '../data/escritos';
 import { daysFromToday } from '../data/mock';
-import type { ChatMessage } from '../types';
+import type { AgentPlanStep, ChatMessage } from '../types';
 
 function parseReminder(text: string): { due: string; dueLabel: string } | null {
   const t = text.toLowerCase();
@@ -29,7 +30,7 @@ export default function Causa() {
   const navigate = useNavigate();
   const causa = useAppStore((s) => s.getCausa(id));
   const addMessage = useAppStore((s) => s.addMessage);
-  const removeMessage = useAppStore((s) => s.removeMessage);
+  const updateMessage = useAppStore((s) => s.updateMessage);
   const markProposalDone = useAppStore((s) => s.markProposalDone);
   const advanceMilestone = useAppStore((s) => s.advanceMilestone);
   const pushToast = useAppStore((s) => s.pushToast);
@@ -64,17 +65,47 @@ export default function Causa() {
     );
   }
 
+  function runAgentPlan(
+    planDef: { title: string; steps: Omit<AgentPlanStep, 'status'>[] },
+    workingText: string,
+    onDone: () => void,
+  ) {
+    const base = toPendingPlan(planDef.steps);
+    const planId = addMessage(id, {
+      role: 'agent',
+      text: workingText,
+      time: '',
+      typing: true,
+      plan: { title: planDef.title, steps: advancePlan(base, 0) },
+    });
+    const stepMs = Math.max(420, Math.min(700, 2200 / Math.max(base.length, 1)));
+    base.forEach((_, i) => {
+      if (i === 0) return;
+      window.setTimeout(() => {
+        updateMessage(id, planId, {
+          plan: { title: planDef.title, steps: advancePlan(base, i) },
+        });
+      }, i * stepMs);
+    });
+    window.setTimeout(() => {
+      updateMessage(id, planId, {
+        typing: false,
+        plan: { title: planDef.title, steps: completePlan(base) },
+      });
+      onDone();
+    }, base.length * stepMs + 280);
+  }
+
   function runFlow(msgId: string, flowKey: string) {
     const script = flows[flowKey] ?? flows.generic;
     markProposalDone(id, msgId);
     addMessage(id, { role: 'user', text: script.userText, time: 'Ahora' });
-    const typingId = addMessage(id, { role: 'agent', text: script.working, time: '', typing: true });
-    window.setTimeout(() => {
-      removeMessage(id, typingId);
+    const planDef = script.plan ?? flows.generic.plan!;
+    runAgentPlan(planDef, script.working, () => {
       addMessage(id, { role: 'agent', text: script.reply, time: 'Ahora', doc: script.doc });
       if (script.milestone) advanceMilestone(id, script.milestone);
       pushToast('ok', script.toast);
-    }, 1600);
+    });
   }
 
   function send() {
@@ -83,9 +114,7 @@ export default function Causa() {
     addMessage(id, { role: 'user', text: v, time: 'Ahora' });
     setInput('');
     const rem = parseReminder(v);
-    const typingId = addMessage(id, { role: 'agent', text: '', time: '', typing: true });
-    window.setTimeout(() => {
-      removeMessage(id, typingId);
+    runAgentPlan(thinkingPlan, rem ? 'Agendando recordatorio…' : 'Revisando el expediente…', () => {
       if (rem) {
         addReminder({ text: v, due: rem.due, causaId: id, causaLabel: causa!.parties });
         addMessage(id, { role: 'agent', text: `Anotado. Te lo recuerdo **${rem.dueLabel}** — lo vas a ver en el Inicio, en “Recordatorios tuyos”. No es un plazo legal, así que no bloquea nada.`, time: 'Ahora' });
@@ -93,7 +122,7 @@ export default function Causa() {
       } else {
         addMessage(id, { role: 'agent', text: agentReply(v), time: 'Ahora' });
       }
-    }, 1200);
+    });
   }
 
   function addNoteHandler() {
@@ -211,7 +240,7 @@ export default function Causa() {
 
               <div className="proc-input">
                 <input
-                  placeholder="Pedile algo a tu procurador… ej: pedí el CAV a la financiera"
+                  placeholder="Pídele algo a tu procurador… ej: pide el CAV a la financiera"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && send()}
@@ -412,7 +441,7 @@ export default function Causa() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             <p style={{ fontSize: 13.5, color: 'var(--muted)', margin: 0 }}>
               {mgmtAction === 'suspend'
-                ? <>La causa <b>{causa.parties}</b> quedará en pausa: sale de las métricas y relojes activos, pero podés reactivarla cuando quieras.</>
+                ? <>La causa <b>{causa.parties}</b> quedará en pausa: sale de las métricas y relojes activos, pero puedes reactivarla cuando quieras.</>
                 : <>La causa <b>{causa.parties}</b> se quitará del listado. Registrá el motivo para dejar traza.</>}
             </p>
             <label style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--indigo)' }}>Motivo</label>
@@ -498,6 +527,21 @@ function ChatBubble({ m, onRun, onDoc }: {
               )}
             </div>
           </div>
+        ) : m.plan ? (
+          <>
+            <AgentPlan title={m.plan.title} steps={m.plan.steps} compact />
+            {!m.typing && m.text && (
+              <div className="msg-bubble" style={{ marginTop: 10 }}>
+                <RichText text={m.text} />
+                {m.doc && (
+                  <button className="msg-doc" onClick={() => onDoc(m.doc!)}>
+                    <Icon name="file" />{m.doc}
+                  </button>
+                )}
+              </div>
+            )}
+            {m.time && !m.typing && <div className="msg-time">{m.time}</div>}
+          </>
         ) : (
           <>
             <div className="msg-bubble">

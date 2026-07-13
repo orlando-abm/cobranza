@@ -4,7 +4,7 @@ import {
   causas as seedCausas, reviewItems as seedReview,
   mandamientos as seedMandamientos, humanTasks as seedHumanTasks,
   demandas as seedDemandas, reminders as seedReminders, causaNotes as seedNotes,
-  TODAY,
+  TODAY, causaFromDemanda,
 } from '../data/mock';
 
 let toastSeq = 0;
@@ -41,9 +41,11 @@ interface AppState {
   reactivateCausa: (id: string) => void;
   deleteCausa: (id: string, reason: string) => void;
 
-  /** FB-01: marca una demanda como lista para presentar. Devuelve la demanda actualizada (para detectar recurrencia). */
-  markDemandaReady: (id: string) => Demanda | undefined;
-  /** FB-08: agrega las demandas recién ingeridas al listado. */
+  /** Etapa 1 · Marca una demanda 'revisar' como corregida → 'redactada'. */
+  markDemandaCorrected: (id: string) => void;
+  /** Etapa 1 · Ingresar causa: crea la Causa con el Rol ingresado y saca la demanda del listado. Devuelve el id de la causa. */
+  submitDemandaToPjud: (id: string, rol: string) => string | undefined;
+  /** Ingesta: agrega las demandas recién creadas al listado. */
   addDemandas: (list: Demanda[]) => void;
 
   /** FB-04: guarda el contenido editado de un escrito. */
@@ -184,11 +186,23 @@ export const useAppStore = create<AppState>((set, get) => ({
       ),
     })),
 
-  markDemandaReady: (id) => {
+  markDemandaCorrected: (id) =>
     set((state) => ({
-      demandas: state.demandas.map((d) => (d.id === id ? { ...d, status: 'lista' } : d)),
+      demandas: state.demandas.map((d) =>
+        d.id === id ? { ...d, status: 'redactada', revisarReason: undefined } : d,
+      ),
+    })),
+
+  submitDemandaToPjud: (id, rol) => {
+    const demanda = get().demandas.find((d) => d.id === id);
+    if (!demanda) return undefined;
+    const causa = causaFromDemanda(demanda, rol);
+    set((state) => ({
+      // La demanda se convierte en causa: se agrega a causas y sale del listado de demandas.
+      causas: state.causas.some((c) => c.id === causa.id) ? state.causas : [causa, ...state.causas],
+      demandas: state.demandas.filter((d) => d.id !== id),
     }));
-    return get().demandas.find((d) => d.id === id);
+    return causa.id;
   },
 
   addDemandas: (list) => set((state) => {

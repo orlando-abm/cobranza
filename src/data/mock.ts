@@ -63,7 +63,7 @@ export const causas: Causa[] = [
         proposal: {
           tag: 'Listo para avanzar',
           text: 'La notificación es efectiva. Ya verifiqué las pre-validaciones: el tribunal **no exige CAV previo**, la notificación no fue por exhorto y el **propietario del CAV es el deudor** (no está transferido). Puedo escribirle al receptor con el rol, tribunal, partes y la patente a embargar. **¿Lo encargo?**',
-          primaryLabel: 'Sí, encargá el embargo',
+          primaryLabel: 'Sí, encarga el embargo',
           secondaryLabel: 'Ver borrador del mail',
           flow: 'encargar-embargo',
         },
@@ -119,7 +119,7 @@ export const causas: Causa[] = [
         proposal: {
           tag: 'Vigilando',
           text: 'Si el plazo expira sin oposición, puedo generar el **certificado de rebeldía** automáticamente y seguir con el embargo. ¿Lo dejo programado?',
-          primaryLabel: 'Sí, dejalo programado',
+          primaryLabel: 'Sí, déjalo programado',
           secondaryLabel: 'Ver cuaderno de apremio',
           flow: 'programar-rebeldia',
         },
@@ -617,23 +617,19 @@ export const semaforo = [
   { k: 'r', big: '8%', lbl: 'Deudores inubicables' },
 ];
 
-// FB-01 · Demandas: entidad previa a la causa. La causa nace recién al subir al PJUD.
+// Etapa 1 · Demandas: entidad previa a la causa. Solo 'revisar' (quedó mal) o 'redactada' (quedó bien).
+// Al ingresar la causa se convierten en Causa y salen de este listado.
 export const demandas: Demanda[] = [
-  { id: 'd1', credito: 'CRÉD·450-118', parties: 'Díaz con OLX', financiera: 'OLX', rut: '18.333.444-5', monto: '$3.980.000', status: 'subida', template: 'GLOBAL 1 SIN EXHORTO', causaId: '450-118' },
-  { id: 'd2', credito: 'CRÉD·884-201', parties: 'Pérez con Tanner', financiera: 'Tanner', rut: '12.345.678-9', monto: '$10.895.269', status: 'subida', template: 'GLOBAL 2 SIN EXHORTO', causaId: '884-201' },
-  { id: 'd3', credito: 'CRÉD·773-119', parties: 'González con Tanner', financiera: 'Tanner', rut: '76.111.222-3', monto: '$18.230.000', status: 'subida', template: 'GLOBAL 2 SOC SIN EXHORTO', causaId: '773-119' },
-  { id: 'd4', credito: 'CRÉD·991-042', parties: 'Vega con Tanner', financiera: 'Tanner', rut: '14.222.333-4', monto: '$5.400.000', status: 'lista', template: 'GLOBAL 1 SIN EXHORTO' },
-  { id: 'd5', credito: 'CRÉD·305-771', parties: 'Morales con Tanner', financiera: 'Tanner', rut: '14.888.777-6', monto: '$6.210.000', status: 'lista', template: 'GLOBAL 2 SIN EXHORTO' },
-  { id: 'd6', credito: 'CRÉD·640-903', parties: 'Reyes con OLX', financiera: 'OLX', rut: '16.777.888-9', monto: '$8.900.000', status: 'lista', template: 'GLOBAL 2 CON EXHORTO' },
+  { id: 'd1', credito: 'CRÉD·220-118', parties: 'Fuentes con OLX', financiera: 'OLX', rut: '17.888.999-0', monto: '$9.100.000', status: 'revisar', revisarReason: 'incompleta', template: 'GLOBAL 1 CON EXHORTO' },
+  { id: 'd2', credito: 'CRÉD·771-330', parties: 'Bravo con OLX', financiera: 'OLX', rut: '18.444.555-6', monto: '$9.800.000', status: 'revisar', revisarReason: 'transferido', template: 'GLOBAL 2 SOC CON EXHORTO' },
+  { id: 'd3', credito: 'CRÉD·305-119', parties: 'Herrera con OLX', financiera: 'OLX', rut: '15.222.888-1', monto: '$7.300.000', status: 'revisar', revisarReason: 'ocr', template: 'GLOBAL 2 CON EXHORTO' },
+  { id: 'd4', credito: 'CRÉD·991-042', parties: 'Vega con Tanner', financiera: 'Tanner', rut: '14.222.333-4', monto: '$5.400.000', status: 'redactada', template: 'GLOBAL 1 SIN EXHORTO' },
+  { id: 'd5', credito: 'CRÉD·305-771', parties: 'Morales con Tanner', financiera: 'Tanner', rut: '14.888.777-6', monto: '$6.210.000', status: 'redactada', template: 'GLOBAL 2 SIN EXHORTO' },
+  { id: 'd6', credito: 'CRÉD·640-903', parties: 'Reyes con OLX', financiera: 'OLX', rut: '16.777.888-9', monto: '$8.900.000', status: 'redactada', template: 'GLOBAL 2 CON EXHORTO' },
   { id: 'd7', credito: 'CRÉD·812-334', parties: 'Castro con Tanner', financiera: 'Tanner', rut: '13.555.111-2', monto: '$11.200.000', status: 'redactada', template: 'GLOBAL 2 SIN EXHORTO' },
-  { id: 'd8', credito: 'CRÉD·220-118', parties: 'Fuentes con OLX', financiera: 'OLX', rut: '17.888.999-0', monto: '$9.100.000', status: 'redactada', template: 'GLOBAL 1 CON EXHORTO' },
-  { id: 'd9', credito: 'CRÉD·771-330', parties: 'Bravo con OLX', financiera: 'OLX', rut: '18.444.555-6', monto: '$9.800.000', status: 'redactada', template: 'GLOBAL 2 SOC CON EXHORTO' },
-  { id: 'd10', credito: 'CRÉD·445-921', parties: 'Núñez con Tanner', financiera: 'Tanner', rut: '19.111.222-3', monto: '$4.200.000', status: 'redactada', template: 'GLOBAL 1 SIN EXHORTO' },
-  { id: 'd11', credito: 'CRÉD·118-500', parties: 'Vargas con OLX', financiera: 'OLX', rut: '16.555.666-7', monto: '$4.750.000', status: 'redactada', template: 'GLOBAL 1 SIN EXHORTO', recurrent: true },
-  { id: 'd12', credito: 'CRÉD·305-119', parties: 'Herrera con OLX', financiera: 'OLX', rut: '15.222.888-1', monto: '$7.300.000', status: 'redactada', template: 'GLOBAL 2 CON EXHORTO' },
-  { id: 'd13', credito: 'CRÉD·902-770', parties: 'Silva con Tanner', financiera: 'Tanner', rut: '13.999.444-2', monto: '$13.600.000', status: 'redactada', template: 'GLOBAL 2 SOC SIN EXHORTO', recurrent: true },
-  { id: 'd14', credito: 'CRÉD·640-221', parties: 'Mora con OLX', financiera: 'OLX', rut: '16.555.666-7', monto: '$5.900.000', status: 'suspendida', template: 'GLOBAL 1 SIN EXHORTO' },
-  { id: 'd15', credito: 'CRÉD·884-660', parties: 'Tapia con Tanner', financiera: 'Tanner', rut: '12.777.333-9', monto: '$8.100.000', status: 'redactada', template: 'GLOBAL 2 SIN EXHORTO' },
+  { id: 'd8', credito: 'CRÉD·445-921', parties: 'Núñez con Tanner', financiera: 'Tanner', rut: '19.111.222-3', monto: '$4.200.000', status: 'redactada', template: 'GLOBAL 1 SIN EXHORTO' },
+  { id: 'd9', credito: 'CRÉD·118-500', parties: 'Vargas con OLX', financiera: 'OLX', rut: '16.555.666-7', monto: '$4.750.000', status: 'redactada', template: 'GLOBAL 1 SIN EXHORTO' },
+  { id: 'd10', credito: 'CRÉD·884-660', parties: 'Tapia con Tanner', financiera: 'Tanner', rut: '12.777.333-9', monto: '$8.100.000', status: 'redactada', template: 'GLOBAL 2 SIN EXHORTO' },
 ];
 
 // FB-08 · Lote que produce un ZIP recién cargado. El status es el desenlace final;
@@ -641,17 +637,84 @@ export const demandas: Demanda[] = [
 export const ingestBatch: IngestStep[] = [
   { id: 'i1', doc: 'CRÉD·907-114 · Salas con Tanner', status: 'validada', detail: 'Pagaré + CAV + tabla OK · propietario = deudor' },
   { id: 'i2', doc: 'CRÉD·907-115 · Peña con Tanner', status: 'validada', detail: 'Set completo · consistencia cruzada OK' },
-  { id: 'i3', doc: 'CRÉD·907-116 · Rojas con Tanner', status: 'revision', detail: 'RUT del pagaré con confianza 68% — a revisión manual' },
+  { id: 'i3', doc: 'CRÉD·907-116 · Rojas con Tanner', status: 'revision', detail: 'RUT del pagaré con confianza 68% — a revisión manual', reason: 'ocr' },
   { id: 'i4', doc: 'CRÉD·907-117 · Vera con Tanner', status: 'validada', detail: 'Set completo · plantilla GLOBAL 2 con aval' },
   { id: 'i5', doc: 'CRÉD·907-118 · Cortés con Tanner', status: 'validada', detail: 'Sociedad · rep. legal ≠ aval detectado' },
-  { id: 'i6', doc: 'CRÉD·907-119 · Ibáñez con Tanner', status: 'error', detail: 'Falta el CAV inicial — documentación incompleta' },
+  { id: 'i6', doc: 'CRÉD·907-119 · Ibáñez con Tanner', status: 'error', detail: 'Falta el CAV inicial — documentación incompleta', reason: 'incompleta' },
   { id: 'i7', doc: 'CRÉD·907-120 · Muñoz con Tanner', status: 'validada', detail: 'Set completo · región → GLOBAL con exhorto' },
-  { id: 'i8', doc: 'CRÉD·907-121 · Farías con Tanner', status: 'revision', detail: 'Pagaré chueco · monto con confianza 71%' },
+  { id: 'i8', doc: 'CRÉD·907-121 · Farías con Tanner', status: 'revision', detail: 'Pagaré chueco · monto con confianza 71%', reason: 'ocr' },
   { id: 'i9', doc: 'CRÉD·907-122 · León con Tanner', status: 'validada', detail: 'Set completo · consistencia cruzada OK' },
   { id: 'i10', doc: 'CRÉD·907-123 · Pinto con Tanner', status: 'validada', detail: 'Set completo · propietario = aval' },
-  { id: 'i11', doc: 'CRÉD·907-124 · Gaete con Tanner', status: 'revision', detail: 'Propietario CAV ≠ deudor — vehículo transferido' },
+  { id: 'i11', doc: 'CRÉD·907-124 · Gaete con Tanner', status: 'revision', detail: 'Propietario CAV ≠ deudor — vehículo transferido', reason: 'transferido' },
   { id: 'i12', doc: 'CRÉD·907-125 · Sáez con Tanner', status: 'validada', detail: 'Set completo · plantilla GLOBAL 1' },
 ];
+
+/** Formatea 'YYYY-MM-DD' a 'DD/MM/YYYY'. */
+function fmt(iso: string): string {
+  const [y, m, d] = iso.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+/** Detalle legible (persona/sociedad · jurisdicción · aval) derivado de la plantilla GLOBAL. */
+function detailFromTemplate(t: string): string {
+  const soc = t.includes('SOC');
+  const region = t.includes('CON EXHORTO');
+  const aval = t.includes('GLOBAL 2');
+  return `${soc ? 'Sociedad' : 'Persona natural'} · ${region ? 'Región' : 'Santiago'} · ${aval ? (soc ? 'rep. legal + aval' : 'con aval') : 'sin aval'}`;
+}
+
+const intentosPorFinanciera: Record<string, number> = { Tanner: 2, OLX: 5, PROFIN: 3 };
+
+/**
+ * Etapa 1 · Crea la Causa al presentar la demanda en el PJUD (spec: "arranca el reloj de la causa").
+ * El Rol lo ingresa el abogado al subir; hasta que el tribunal distribuye puede ir "En trámite de ingreso".
+ */
+export function causaFromDemanda(d: Demanda, rol: string): Causa {
+  const id = d.credito.replace(/^CRÉD·/, '');
+  const intentos = intentosPorFinanciera[d.financiera] ?? 2;
+  const fecha = fmt(TODAY);
+  return {
+    id,
+    credito: d.credito,
+    parties: d.parties,
+    detail: detailFromTemplate(d.template),
+    financiera: d.financiera,
+    stage: 'Demanda',
+    clock: { label: 'En admisibilidad', tone: 'calm', icon: 'spinner' },
+    rol,
+    tribunal: 'Por distribuir',
+    receptor: '—',
+    monto: d.monto,
+    intentos: `0 de ${intentos}`,
+    rut: d.rut,
+    milestones: [
+      { label: 'Demanda presentada', pct: '5%', state: 'active' },
+      { label: 'Notificación efectiva', pct: '10%', state: 'wait' },
+      { label: 'Embargo inscrito', pct: '15%', state: 'wait' },
+    ],
+    apremio: {
+      badge: 'sin plazo activo',
+      timeline: [
+        { title: 'Demanda presentada', detail: `Ingresada al PJUD el ${fecha} · Rol ${rol}`, state: 'done' },
+        { title: 'En admisibilidad', detail: 'Esperando distribución y ‘despáchese’ del tribunal.', state: 'pending' },
+      ],
+    },
+    chat: [
+      {
+        id: 'm1', role: 'agent', time: 'Ahora',
+        text: `Presenté la demanda en el PJUD (Rol **${rol}**) con la plantilla ${d.template}. Arranca el reloj de admisibilidad; apenas el tribunal provea, valido el mandamiento campo a campo.`,
+        doc: 'Demanda ejecutiva.pdf',
+      },
+    ],
+    docs: [
+      { name: 'Demanda ejecutiva.pdf', type: 'Demanda', date: fecha, cuaderno: 'Principal' },
+      { name: 'Pagaré protestado.pdf', type: 'Título ejecutivo', date: fecha, cuaderno: 'Principal' },
+    ],
+    billing: [
+      { label: 'Demanda presentada', pct: 5, date: fecha, doc: 'Cargo de ingreso OJV', billed: false },
+    ],
+  };
+}
 
 // FB-02 · Briefing del agente global: resumen del día del PJUD, agrupado por tipo.
 export const agentBriefing = {

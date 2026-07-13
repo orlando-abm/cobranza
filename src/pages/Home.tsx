@@ -98,7 +98,7 @@ export default function Home() {
       <div className="grid">
         <div className="col-main">
           <div className="sec-label">
-            <h2>⏱ Vence pronto — decides tú</h2>
+            <h2><Icon name="clock" className="sec-ic" />Vence pronto — decides tú</h2>
             <a className="see" onClick={() => navigate('/causas')}>Ver todo</a>
           </div>
 
@@ -137,7 +137,7 @@ export default function Home() {
             <>
               <div style={{ height: 26 }} />
               <div className="sec-label">
-                <h2>🔔 Recordatorios tuyos</h2>
+                <h2><Icon name="bell" className="sec-ic" />Recordatorios tuyos</h2>
                 <span className="see" style={{ cursor: 'default' }}>No son plazos legales</span>
               </div>
               <div className="side-card" style={{ padding: '6px 16px' }}>
@@ -159,7 +159,7 @@ export default function Home() {
           <div style={{ height: 26 }} />
 
           <div className="sec-label">
-            <h2>⚡ Puedo avanzar esto por ti — en lote</h2>
+            <h2><Icon name="bolt" className="sec-ic" />Puedo avanzar esto por ti — en lote</h2>
           </div>
 
           {visibleBatch.map((m) => (
@@ -176,7 +176,7 @@ export default function Home() {
           <div style={{ height: 26 }} />
 
           <div className="sec-label">
-            <h2>🙋 Necesita tu revisión</h2>
+            <h2><Icon name="clipboard" className="sec-ic" />Necesita tu revisión</h2>
             <a className="see" onClick={() => navigate('/revisiones')}>Ver todo</a>
           </div>
 
@@ -199,7 +199,7 @@ export default function Home() {
               <div style={{ width: 46, height: 46, borderRadius: 13, background: 'var(--violeta-ghost)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', color: 'var(--violeta)' }}>
                 <Icon name="upload" size={22} />
               </div>
-              <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--indigo)', marginBottom: 4 }}>Cargá un ZIP del lote</div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--indigo)', marginBottom: 4 }}>Carga un ZIP del lote</div>
               <div style={{ fontSize: 12.5, color: 'var(--muted)', marginBottom: 14 }}>La ingesta y redacción viven en Demandas, con feedback en vivo</div>
               <button className="btn btn-dark" style={{ width: '100%', justifyContent: 'center' }} onClick={() => navigate('/demandas')}>
                 Ir a Demandas
