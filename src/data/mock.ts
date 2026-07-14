@@ -1,5 +1,5 @@
 import type {
-  Causa, UrgentItem, BatchMetric, RecentItem,
+  Causa, ChatMessage, UrgentItem, BatchMetric, RecentItem,
   ReviewItem, Receptor, FinancieraPauta, MandamientoReview, HumanTask,
   Demanda, IngestStep, Reminder, CausaNote,
 } from '../types';
@@ -617,9 +617,56 @@ export const semaforo = [
   { k: 'r', big: '8%', lbl: 'Deudores inubicables' },
 ];
 
+/** Confianza (0-100) con la que el agente generó/seleccionó el borrador, según estado y motivo. */
+export function confidenceFor(d: Demanda): number {
+  if (d.status === 'revisar') {
+    return d.revisarReason === 'incompleta' ? 58 : d.revisarReason === 'transferido' ? 64 : 71;
+  }
+  const n = parseInt((d.credito.match(/\d/g) ?? ['9', '0']).join('').slice(-2), 10) || 90;
+  return 86 + (n % 11); // 86–96
+}
+
+// Etapa 1 · Chat semilla del procurador para una demanda (fase agéntica previa a la causa).
+export function initialDemandaChat(d: Demanda): ChatMessage[] {
+  const conf = d.confidence ?? confidenceFor(d);
+  if (d.status === 'revisar') {
+    const motivo = {
+      incompleta: 'falta uno de los 4 documentos mandatorios (pagaré, CAV inicial, tabla de desarrollo o mandato).',
+      transferido: 'el propietario del CAV no coincide con el deudor/aval: el vehículo pudo transferirse. Requiere tu decisión.',
+      ocr: 'un campo se leyó con baja confianza (OCR). Conviene verificar RUT, nombres y monto contra el PDF origen.',
+    }[d.revisarReason ?? 'ocr'];
+    return [
+      { id: 'dm1', role: 'agent', time: 'Ahora', confidence: conf, text: `Redacté la demanda de **${d.parties}** con la plantilla ${d.template}, pero quedó **por revisar**: ${motivo} Por eso mi confianza en este borrador es baja.` },
+      {
+        id: 'dm2', role: 'agent', time: 'Ahora', text: '',
+        proposal: {
+          tag: 'Por revisar',
+          text: 'Puedo **abrir el borrador** para que lo corrijas, o **reasignar la plantilla** si no calza con el deudor y los avales. Cuando quede conforme, lo marcamos como redactado.',
+          primaryLabel: 'Abrir el borrador',
+          secondaryLabel: 'Reasignar plantilla',
+          flow: 'demanda-editar',
+        },
+      },
+    ];
+  }
+  return [
+    { id: 'dm1', role: 'agent', time: 'Ahora', confidence: conf, text: `Redacté la demanda de **${d.parties}** con la plantilla **${d.template}** (financiera ${d.financiera}, monto ${d.monto}). La generé con esta confianza; revisa que la plantilla calce con el deudor, los avales y la jurisdicción.` },
+    {
+      id: 'dm2', role: 'agent', time: 'Ahora', text: '',
+      proposal: {
+        tag: 'Borrador listo',
+        text: 'Si me equivoqué de plantilla, la **reasigno** enseguida. Si quieres revisar el texto, te abro el **borrador** editable. Cuando esté conforme, ingresas la causa.',
+        primaryLabel: 'Reasignar plantilla',
+        secondaryLabel: 'Ver borrador',
+        flow: 'demanda-plantilla',
+      },
+    },
+  ];
+}
+
 // Etapa 1 · Demandas: entidad previa a la causa. Solo 'revisar' (quedó mal) o 'redactada' (quedó bien).
 // Al ingresar la causa se convierten en Causa y salen de este listado.
-export const demandas: Demanda[] = [
+const demandasBase: Demanda[] = [
   { id: 'd1', credito: 'CRÉD·220-118', parties: 'Fuentes con OLX', financiera: 'OLX', rut: '17.888.999-0', monto: '$9.100.000', status: 'revisar', revisarReason: 'incompleta', template: 'GLOBAL 1 CON EXHORTO' },
   { id: 'd2', credito: 'CRÉD·771-330', parties: 'Bravo con OLX', financiera: 'OLX', rut: '18.444.555-6', monto: '$9.800.000', status: 'revisar', revisarReason: 'transferido', template: 'GLOBAL 2 SOC CON EXHORTO' },
   { id: 'd3', credito: 'CRÉD·305-119', parties: 'Herrera con OLX', financiera: 'OLX', rut: '15.222.888-1', monto: '$7.300.000', status: 'revisar', revisarReason: 'ocr', template: 'GLOBAL 2 CON EXHORTO' },
@@ -631,6 +678,11 @@ export const demandas: Demanda[] = [
   { id: 'd9', credito: 'CRÉD·118-500', parties: 'Vargas con OLX', financiera: 'OLX', rut: '16.555.666-7', monto: '$4.750.000', status: 'redactada', template: 'GLOBAL 1 SIN EXHORTO' },
   { id: 'd10', credito: 'CRÉD·884-660', parties: 'Tapia con Tanner', financiera: 'Tanner', rut: '12.777.333-9', monto: '$8.100.000', status: 'redactada', template: 'GLOBAL 2 SIN EXHORTO' },
 ];
+
+export const demandas: Demanda[] = demandasBase.map((d) => {
+  const withConf: Demanda = { ...d, confidence: confidenceFor(d) };
+  return { ...withConf, chat: initialDemandaChat(withConf) };
+});
 
 // FB-08 · Lote que produce un ZIP recién cargado. El status es el desenlace final;
 // la ingesta en vivo muestra "leyendo" hasta revelar cada fila.

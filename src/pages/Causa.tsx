@@ -1,15 +1,14 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import Icon from '../components/Icon';
-import RichText from '../components/RichText';
 import Modal from '../components/Modal';
 import EscritoEditor from '../components/EscritoEditor';
-import AgentPlan, { advancePlan, completePlan } from '../components/AgentPlan';
+import ProcuradorChat from '../components/ProcuradorChat';
 import { useAppStore } from '../store/useAppStore';
-import { flows, agentReply, thinkingPlan, toPendingPlan } from '../data/flows';
+import { flows, agentReply, thinkingPlan } from '../data/flows';
+import { runAgentPlan } from '../data/agentRun';
 import { escritoFor, type EscritoTemplate } from '../data/escritos';
 import { daysFromToday } from '../data/mock';
-import type { AgentPlanStep, ChatMessage } from '../types';
 
 function parseReminder(text: string): { due: string; dueLabel: string } | null {
   const t = text.toLowerCase();
@@ -50,11 +49,6 @@ export default function Causa() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [mgmtAction, setMgmtAction] = useState<'suspend' | 'delete' | null>(null);
   const [reason, setReason] = useState('');
-  const bodyRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
-  }, [causa?.chat.length, tab]);
 
   if (!causa) {
     return (
@@ -65,43 +59,12 @@ export default function Causa() {
     );
   }
 
-  function runAgentPlan(
-    planDef: { title: string; steps: Omit<AgentPlanStep, 'status'>[] },
-    workingText: string,
-    onDone: () => void,
-  ) {
-    const base = toPendingPlan(planDef.steps);
-    const planId = addMessage(id, {
-      role: 'agent',
-      text: workingText,
-      time: '',
-      typing: true,
-      plan: { title: planDef.title, steps: advancePlan(base, 0) },
-    });
-    const stepMs = Math.max(420, Math.min(700, 2200 / Math.max(base.length, 1)));
-    base.forEach((_, i) => {
-      if (i === 0) return;
-      window.setTimeout(() => {
-        updateMessage(id, planId, {
-          plan: { title: planDef.title, steps: advancePlan(base, i) },
-        });
-      }, i * stepMs);
-    });
-    window.setTimeout(() => {
-      updateMessage(id, planId, {
-        typing: false,
-        plan: { title: planDef.title, steps: completePlan(base) },
-      });
-      onDone();
-    }, base.length * stepMs + 280);
-  }
-
   function runFlow(msgId: string, flowKey: string) {
     const script = flows[flowKey] ?? flows.generic;
     markProposalDone(id, msgId);
     addMessage(id, { role: 'user', text: script.userText, time: 'Ahora' });
     const planDef = script.plan ?? flows.generic.plan!;
-    runAgentPlan(planDef, script.working, () => {
+    runAgentPlan(addMessage, updateMessage, id, planDef, script.working, () => {
       addMessage(id, { role: 'agent', text: script.reply, time: 'Ahora', doc: script.doc });
       if (script.milestone) advanceMilestone(id, script.milestone);
       pushToast('ok', script.toast);
@@ -114,7 +77,7 @@ export default function Causa() {
     addMessage(id, { role: 'user', text: v, time: 'Ahora' });
     setInput('');
     const rem = parseReminder(v);
-    runAgentPlan(thinkingPlan, rem ? 'Agendando recordatorio…' : 'Revisando el expediente…', () => {
+    runAgentPlan(addMessage, updateMessage, id, thinkingPlan, rem ? 'Agendando recordatorio…' : 'Revisando el expediente…', () => {
       if (rem) {
         addReminder({ text: v, due: rem.due, causaId: id, causaLabel: causa!.parties });
         addMessage(id, { role: 'agent', text: `Anotado. Te lo recuerdo **${rem.dueLabel}** — lo vas a ver en el Inicio, en “Recordatorios tuyos”. No es un plazo legal, así que no bloquea nada.`, time: 'Ahora' });
@@ -220,34 +183,17 @@ export default function Causa() {
       {tab === 'Procurador' && (
         <div className="causa-grid">
           <div>
-            <div className="proc-card">
-              <div className="proc-header">
-                <div className="proc-avatar"><Icon name="message" /></div>
-                <div>
-                  <div className="pt">Tu procurador en esta causa</div>
-                  <div className="ps"><span className="live" />Vigilando ambos cuadernos en tiempo real</div>
-                </div>
-              </div>
-
-              <div className="proc-body" ref={bodyRef}>
-                {causa.chat.map((m) => (
-                  <ChatBubble key={m.id} m={m}
-                    onRun={runFlow}
-                    onDoc={openDoc}
-                  />
-                ))}
-              </div>
-
-              <div className="proc-input">
-                <input
-                  placeholder="Pídele algo a tu procurador… ej: pide el CAV a la financiera"
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => e.key === 'Enter' && send()}
-                />
-                <button className="proc-send" onClick={send} aria-label="Enviar"><Icon name="send" /></button>
-              </div>
-            </div>
+            <ProcuradorChat
+              title="Tu procurador en esta causa"
+              sub="Vigilando ambos cuadernos en tiempo real"
+              messages={causa.chat}
+              input={input}
+              placeholder="Pídele algo a tu procurador… ej: pide el CAV a la financiera"
+              onInput={setInput}
+              onSend={send}
+              onRunFlow={runFlow}
+              onDoc={openDoc}
+            />
           </div>
 
           <div className="col-side">
@@ -501,67 +447,3 @@ function InscripcionClock({ day, status, patente }: {
   );
 }
 
-function ChatBubble({ m, onRun, onDoc }: {
-  m: ChatMessage;
-  onRun: (msgId: string, flow: string) => void;
-  onDoc: (title: string) => void;
-}) {
-  return (
-    <div className={`msg ${m.role}`}>
-      <div className={`msg-avatar ${m.role}`}>
-        {m.role === 'agent' ? <Icon name="message" /> : 'CO'}
-      </div>
-      <div className="msg-content">
-        {m.proposal ? (
-          <div className={`proposal${m.proposal.done ? ' done' : ''}`}>
-            <span className="proposal-tag"><Icon name="bolt" />{m.proposal.tag}</span>
-            <div className="proposal-text"><RichText text={m.proposal.text} /></div>
-            <div className="proposal-actions">
-              <button className="btn btn-primary" onClick={() => onRun(m.id, m.proposal!.flow)}>
-                <Icon name="bolt" />{m.proposal.primaryLabel}
-              </button>
-              {m.proposal.secondaryLabel && (
-                <button className="btn btn-ghost" onClick={() => onDoc(m.proposal!.secondaryLabel!)}>
-                  {m.proposal.secondaryLabel}
-                </button>
-              )}
-            </div>
-          </div>
-        ) : m.plan ? (
-          <>
-            <AgentPlan title={m.plan.title} steps={m.plan.steps} compact />
-            {!m.typing && m.text && (
-              <div className="msg-bubble" style={{ marginTop: 10 }}>
-                <RichText text={m.text} />
-                {m.doc && (
-                  <button className="msg-doc" onClick={() => onDoc(m.doc!)}>
-                    <Icon name="file" />{m.doc}
-                  </button>
-                )}
-              </div>
-            )}
-            {m.time && !m.typing && <div className="msg-time">{m.time}</div>}
-          </>
-        ) : (
-          <>
-            <div className="msg-bubble">
-              {m.typing && !m.text ? (
-                <span className="typing"><span /><span /><span /></span>
-              ) : m.typing ? (
-                <span style={{ color: 'var(--muted)' }}>{m.text}</span>
-              ) : (
-                <RichText text={m.text} />
-              )}
-              {m.doc && (
-                <button className="msg-doc" onClick={() => onDoc(m.doc!)}>
-                  <Icon name="file" />{m.doc}
-                </button>
-              )}
-            </div>
-            {m.time && <div className="msg-time">{m.time}</div>}
-          </>
-        )}
-      </div>
-    </div>
-  );
-}

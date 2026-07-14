@@ -2,12 +2,11 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Icon, { type IconName } from '../components/Icon';
 import Modal from '../components/Modal';
-import EscritoEditor from '../components/EscritoEditor';
 import AgentPlan, { advancePlan, completePlan } from '../components/AgentPlan';
+import ConfidenceBadge from '../components/ConfidenceBadge';
 import { useAppStore } from '../store/useAppStore';
-import { ingestBatch } from '../data/mock';
+import { ingestBatch, initialDemandaChat, confidenceFor } from '../data/mock';
 import { ingestPlan, toPendingPlan } from '../data/flows';
-import { escritos } from '../data/escritos';
 import type { AgentPlanStep, Demanda, DemandaStatus, IngestStep, RevisarReason } from '../types';
 
 const reasonMeta: Record<RevisarReason, { label: string; detail: string }> = {
@@ -29,7 +28,6 @@ const ruts = ['14.552.331-9', '9.884.201-K', '17.203.556-4', '12.907.118-2', '20
 export default function Demandas() {
   const navigate = useNavigate();
   const demandas = useAppStore((s) => s.demandas);
-  const markDemandaCorrected = useAppStore((s) => s.markDemandaCorrected);
   const submitDemandaToPjud = useAppStore((s) => s.submitDemandaToPjud);
   const addDemandas = useAppStore((s) => s.addDemandas);
   const pushToast = useAppStore((s) => s.pushToast);
@@ -46,8 +44,7 @@ export default function Demandas() {
   const timers = useRef<number[]>([]);
   useEffect(() => () => { timers.current.forEach((t) => clearTimeout(t)); }, []);
 
-  // Editor de la demanda (documento del agente, siempre editable) + ingreso de causa
-  const [editing, setEditing] = useState<Demanda | null>(null);
+  // Ingreso de causa (atajo desde una fila redactada)
   const [submit, setSubmit] = useState<Demanda | null>(null);
   const [rol, setRol] = useState('');
 
@@ -106,13 +103,15 @@ export default function Demandas() {
         const [credito, parties] = s.doc.split(' · ');
         const financiera = parties.includes('OLX') ? 'OLX' : parties.includes('PROFIN') ? 'PROFIN' : 'Tanner';
         const ok = s.status === 'validada';
-        return {
+        const d: Demanda = {
           id: `ing-${credito}`, credito, parties, financiera,
           rut: ruts[i % ruts.length], monto: montos[i % montos.length],
           status: ok ? 'redactada' : 'revisar',
           revisarReason: ok ? undefined : s.reason,
           template: 'GLOBAL 1 SIN EXHORTO',
         };
+        const withConf: Demanda = { ...d, confidence: confidenceFor(d) };
+        return { ...withConf, chat: initialDemandaChat(withConf) };
       });
       addDemandas(nuevas);
       setDone(true);
@@ -129,13 +128,6 @@ export default function Demandas() {
     setPlanSteps([]);
   }
 
-  function correctFromEditor(d: Demanda) {
-    markDemandaCorrected(d.id);
-    setEditing(null);
-    setTab('redactada');
-    pushToast('ok', `${d.credito} corregida — queda redactada, lista para ingresar la causa.`);
-  }
-
   function confirmSubmit() {
     if (!submit) return;
     const r = rol.trim();
@@ -146,13 +138,6 @@ export default function Demandas() {
     pushToast('ok', `Causa creada con Rol ${r}. Arrancó el reloj y el hito de facturación (5%).`);
     if (causaId) navigate(`/causas/${causaId}`);
   }
-
-  // Todo documento del agente se abre editable en el editor tipo Word.
-  const editorAction = editing && editing.status === 'revisar'
-    ? { label: 'Marcar corregida', icon: 'check' as const, onClick: () => correctFromEditor(editing) }
-    : editing
-      ? { label: 'Ingresar causa', icon: 'arrowRight' as const, onClick: () => { const d = editing; setEditing(null); setSubmit(d); } }
-      : undefined;
 
   return (
     <>
@@ -254,24 +239,27 @@ export default function Demandas() {
               </div>
             )}
             {rows.map((d) => (
-              <div className="op-row demanda-row" key={d.id}>
+              <div
+                className="op-row demanda-row clickable"
+                key={d.id}
+                role="button"
+                tabIndex={0}
+                onClick={() => navigate(`/demandas/${d.id}`)}
+                onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && navigate(`/demandas/${d.id}`)}
+              >
                 <span className="op-credito">{d.credito}</span>
                 <div className="op-parties">
                   <div className="n">{d.parties}</div>
                   <div className="f">{d.financiera} · RUT {d.rut} · {d.template}</div>
                 </div>
+                {d.confidence != null && <ConfidenceBadge pct={d.confidence} />}
                 {d.status === 'revisar' && d.revisarReason && (
                   <span className="revisar-flag"><Icon name="alert" size={12} />{reasonMeta[d.revisarReason].label}</span>
                 )}
                 <div className="demanda-action">
-                  {d.status === 'revisar' ? (
-                    <button className="btn btn-primary btn-sm" onClick={() => setEditing(d)}><Icon name="alert" />Revisar y corregir</button>
-                  ) : (
-                    <>
-                      <button className="btn btn-ghost btn-sm" onClick={() => setEditing(d)}><Icon name="eye" />Ver</button>
-                      <button className="btn btn-primary btn-sm" onClick={() => setSubmit(d)}><Icon name="arrowRight" />Ingresar causa</button>
-                    </>
-                  )}
+                  {d.status === 'redactada'
+                    ? <button className="btn btn-primary btn-sm" onClick={(e) => { e.stopPropagation(); setSubmit(d); }}><Icon name="arrowRight" />Ingresar causa</button>
+                    : <span className="op-chev"><Icon name="chevronRight" /></span>}
                 </div>
               </div>
             ))}
@@ -279,18 +267,7 @@ export default function Demandas() {
         </>
       )}
 
-      {/* Documento del agente: siempre editable en el editor tipo Word */}
-      {editing && (
-        <EscritoEditor
-          escritoId={`demanda:${editing.id}`}
-          title={`Demanda ejecutiva · ${editing.credito}`}
-          body={escritos.demanda.body}
-          action={editorAction}
-          onClose={() => setEditing(null)}
-        />
-      )}
-
-      {/* Ingresar causa: pide el Rol y convierte la demanda en causa */}
+      {/* Ingresar causa: pide el Rol y convierte la demanda en causa (atajo de fila redactada) */}
       {submit && (
         <Modal
           title="Ingresar la causa en el PJUD"

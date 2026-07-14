@@ -2,6 +2,19 @@
 
 Front (solo frontend) del agente de cobranza judicial para estudios jurídicos. React 19 + TS + Vite + Zustand.
 
+## Features nuevos — PRD obligatorio
+
+- **Todo feature nuevo** (funcionalidad, no corrección de bugs) **debe llevar un PRD asociado** en `docs/prds/`,
+  siguiendo la estructura existente (formato Linear):
+  - Ubicación: `docs/prds/<issue-padre>/subissues/prd-YYYY-MM-DD-<slug>.md` (o un `issue.md` si es un issue padre nuevo).
+  - Misma **estructura interior** que los PRDs existentes: metadata (Tracker Task ID, Creado/Reunión, Participantes,
+    Estado, Tipo Linear, Parent Linear Issue, Autonomía) + secciones 1-8 (Problema y Contexto · Objetivos `OBJ-##` ·
+    No-Goals · User Stories · Requerimientos Funcionales `RF-##` · Criterios de Aceptación `AC-##` machine-readable ·
+    Decisiones y Preguntas Abiertas · Trabajo Futuro).
+  - **Registrarlo** en el índice `docs/prds/prd-2026-07-14-00-indice-linear.md` bajo su issue padre.
+- Las **correcciones de errores** no requieren PRD.
+- Ejemplo: [docs/prds/demanda-redaccion-revision/subissues/prd-2026-07-14-demanda-detalle-agentico.md](docs/prds/demanda-redaccion-revision/subissues/prd-2026-07-14-demanda-detalle-agentico.md).
+
 ## Copy / idioma — regla dura
 
 - **Nunca usar voseo (rioplatense).** Español chileno neutro con **tuteo ("tú")** o forma impersonal.

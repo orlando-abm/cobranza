@@ -6,6 +6,7 @@ import App from './App';
 import Home from './pages/Home';
 import Welcome from './pages/Welcome';
 import Demandas from './pages/Demandas';
+import DemandaDetalle from './pages/DemandaDetalle';
 import EstadoDiario from './pages/EstadoDiario';
 import Causas from './pages/Causas';
 import Causa from './pages/Causa';
@@ -22,6 +23,7 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: 'bienvenida', element: <Welcome /> },
       { path: 'demandas', element: <Demandas /> },
+      { path: 'demandas/:id', element: <DemandaDetalle /> },
       { path: 'estado-diario', element: <EstadoDiario /> },
       { path: 'causas', element: <Causas /> },
       { path: 'causas/:id', element: <Causa /> },

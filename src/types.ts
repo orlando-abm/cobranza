@@ -44,6 +44,8 @@ export interface ChatMessage {
   time: string;
   doc?: string;
   typing?: boolean;
+  /** Confianza (0-100) del agente en el documento generado/sugerido en este mensaje. */
+  confidence?: number;
   /** Plan animado del procurador mientras trabaja (Agent Plan). */
   plan?: {
     title: string;
@@ -233,6 +235,10 @@ export interface Demanda {
   template: string;
   /** Si status = 'revisar': por qué quedó mal (incompleta / vehículo transferido / OCR bajo umbral). */
   revisarReason?: RevisarReason;
+  /** Confianza (0-100) del agente al generar/seleccionar el borrador de la demanda. */
+  confidence?: number;
+  /** Chat del procurador sobre la demanda (fase agéntica previa a la causa). */
+  chat?: ChatMessage[];
 }
 
 /** Etapa 1 · Paso de ingesta que se muestra en vivo mientras se crean las demandas del lote. */

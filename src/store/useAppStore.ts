@@ -48,6 +48,15 @@ interface AppState {
   /** Ingesta: agrega las demandas recién creadas al listado. */
   addDemandas: (list: Demanda[]) => void;
 
+  /** Fase agéntica de la demanda: chat del procurador y reasignación de plantilla. */
+  getDemanda: (id: string) => Demanda | undefined;
+  addDemandaMessage: (id: string, msg: Omit<ChatMessage, 'id'>) => string;
+  updateDemandaMessage: (id: string, msgId: string, patch: Partial<ChatMessage>) => void;
+  removeDemandaMessage: (id: string, msgId: string) => void;
+  markDemandaProposalDone: (id: string, msgId: string) => void;
+  setDemandaTemplate: (id: string, template: string) => void;
+  setDemandaConfidence: (id: string, pct: number) => void;
+
   /** FB-04: guarda el contenido editado de un escrito. */
   saveEscritoDraft: (id: string, html: string) => void;
 
@@ -210,6 +219,51 @@ export const useAppStore = create<AppState>((set, get) => ({
     const fresh = list.filter((d) => !existing.has(d.id));
     return { demandas: [...fresh, ...state.demandas] };
   }),
+
+  getDemanda: (id) => get().demandas.find((d) => d.id === id),
+
+  addDemandaMessage: (id, msg) => {
+    const msgId = uid();
+    set((state) => ({
+      demandas: state.demandas.map((d) =>
+        d.id === id ? { ...d, chat: [...(d.chat ?? []), { ...msg, id: msgId }] } : d,
+      ),
+    }));
+    return msgId;
+  },
+
+  updateDemandaMessage: (id, msgId, patch) =>
+    set((state) => ({
+      demandas: state.demandas.map((d) =>
+        d.id === id ? { ...d, chat: (d.chat ?? []).map((m) => (m.id === msgId ? { ...m, ...patch } : m)) } : d,
+      ),
+    })),
+
+  removeDemandaMessage: (id, msgId) =>
+    set((state) => ({
+      demandas: state.demandas.map((d) =>
+        d.id === id ? { ...d, chat: (d.chat ?? []).filter((m) => m.id !== msgId) } : d,
+      ),
+    })),
+
+  markDemandaProposalDone: (id, msgId) =>
+    set((state) => ({
+      demandas: state.demandas.map((d) =>
+        d.id === id
+          ? { ...d, chat: (d.chat ?? []).map((m) => (m.id === msgId && m.proposal ? { ...m, proposal: { ...m.proposal, done: true } } : m)) }
+          : d,
+      ),
+    })),
+
+  setDemandaTemplate: (id, template) =>
+    set((state) => ({
+      demandas: state.demandas.map((d) => (d.id === id ? { ...d, template } : d)),
+    })),
+
+  setDemandaConfidence: (id, pct) =>
+    set((state) => ({
+      demandas: state.demandas.map((d) => (d.id === id ? { ...d, confidence: pct } : d)),
+    })),
 
   saveEscritoDraft: (id, html) =>
     set((state) => ({ escritosDrafts: { ...state.escritosDrafts, [id]: html } })),

@@ -176,3 +176,23 @@ export function agentReply(text: string): string {
 export function toPendingPlan(items: Omit<AgentPlanStep, 'status'>[]): AgentPlanStep[] {
   return items.map((s) => ({ ...s, status: 'pending' as const }));
 }
+
+/** Plan de reasignación de plantilla (fase de demanda). */
+export const cambiarPlantillaPlan = {
+  title: 'Reasignar plantilla',
+  steps: steps([
+    { id: 'cp1', title: 'Releer el pagaré', description: 'Contar partes y avales; detectar si es sociedad.', tools: ['OCR', 'Pagaré'] },
+    { id: 'cp2', title: 'Cruzar jurisdicción', description: 'Santiago vs región (exhorto en el 4º otrosí).', tools: ['CAV'] },
+    { id: 'cp3', title: 'Reasignar la plantilla GLOBAL', description: 'Deja el borrador con la plantilla correcta.', tools: ['Plantillas'] },
+  ]),
+};
+
+/** Respuesta libre del procurador en una demanda (fase previa a la causa). Sin voseo. */
+export function agentReplyDemanda(text: string): string {
+  const t = text.toLowerCase();
+  if (t.includes('plantilla') || t.includes('equivoc')) return 'Puedo reasignar la **plantilla GLOBAL** que corresponde según el deudor, los avales y la jurisdicción. Abre el selector y elige cuál calza.';
+  if (t.includes('aval')) return 'Si el pagaré tiene aval (o la sociedad con representante legal distinto), corresponde una plantilla **GLOBAL 2**. Puedo reasignarla desde el selector de plantillas.';
+  if (t.includes('monto') || t.includes('nombre') || t.includes('rut') || t.includes('domicilio') || t.includes('cambi') || t.includes('corrig') || t.includes('edit') || t.includes('text')) return 'Eso lo ajustas en el **borrador**: te abro el editor tipo Word para cambiarlo y guardarlo.';
+  if (t.includes('ingres') || t.includes('causa') || t.includes('present') || t.includes('subir')) return 'Cuando el borrador esté conforme, con **Ingresar causa** la presento en el PJUD: ahí nace la causa con su Rol y arranca el reloj.';
+  return 'Anotado. Reviso el borrador de la demanda y te propongo el ajuste. Puedo reasignar la plantilla o abrir el editor para cambios puntuales.';
+}

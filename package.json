@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
+    "linear:teams": "node scripts/import-prds-to-linear.mjs --list-teams",
+    "linear:import-prds": "node scripts/import-prds-to-linear.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
