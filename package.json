@@ -9,7 +9,11 @@
     "lint": "oxlint",
     "linear:teams": "node scripts/import-prds-to-linear.mjs --list-teams",
     "linear:import-prds": "node scripts/import-prds-to-linear.mjs",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "landing:install": "npm --prefix landing install",
+    "dev:landing": "npm --prefix landing run dev",
+    "build:landing": "npm --prefix landing run build",
+    "lint:landing": "npm --prefix landing run lint"
   },
   "dependencies": {
     "@radix-ui/react-tooltip": "^1.2.12",

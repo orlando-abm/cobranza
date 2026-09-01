@@ -10,7 +10,7 @@ Front (solo frontend) del agente de cobranza judicial para estudios jurídicos. 
   - Misma **estructura interior** que los PRDs existentes: metadata (Tracker Task ID, Creado/Reunión, Participantes,
     Estado, Tipo Linear, Parent Linear Issue, Autonomía) + secciones 1-8 (Problema y Contexto · Objetivos `OBJ-##` ·
     No-Goals · User Stories · Requerimientos Funcionales `RF-##` · Criterios de Aceptación `AC-##` machine-readable ·
-    Decisiones y Preguntas Abiertas · Trabajo Futuro).
+    Notas de implementación · Fuera de alcance v1).
   - **Registrarlo** en el índice `docs/prds/prd-2026-07-14-00-indice-linear.md` bajo su issue padre.
 - Las **correcciones de errores** no requieren PRD.
 - Ejemplo: [docs/prds/demanda-redaccion-revision/subissues/prd-2026-07-14-demanda-detalle-agentico.md](docs/prds/demanda-redaccion-revision/subissues/prd-2026-07-14-demanda-detalle-agentico.md).

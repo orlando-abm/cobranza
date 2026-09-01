@@ -4,6 +4,7 @@
 **Creado:** 2026-07-14 | **Reunión:** Levantamiento proyecto cobranza judicial PJUD
 **Participantes:** Equipo Producto ProdBooster, Equipo Legal/Operaciones, Equipo Desarrollo
 **Estado:** Draft
+**Fase:** [F3] Notificación y flujo post-monitor
 **Tipo Linear:** Subissue
 **Parent Linear Issue:** notificacion-receptores-domicilios
 **Autonomía:** AUTOMÁTICO con revisión humana
@@ -12,55 +13,60 @@
 
 ## 1. Problema y Contexto
 
-Este subissue pertenece a `notificacion-receptores-domicilios`. El foco es clasificar el resultado del receptor leyendo el estampado real. El PRD describe qué debe pasar desde el punto de vista legal y operativo, sin cerrar el cómo técnico.
+[F3] Notificación y flujo post-monitor. Este ticket cubre clasificar el resultado del receptor leyendo el estampado real del PDF. El dolor operativo de Cobranza Judicial es que el seguimiento manual de cientos de causas provoca atrasos, omisiones y pérdida de recuperación. El PRD debe dejar claro qué puede resolver el agente, qué queda bajo aprobación y qué se deriva a revisión humana.
 
 ## 2. Objetivos
 
-- [ ] OBJ-01: Confirmar y documentar funcionalmente: clasificar el resultado del receptor leyendo el estampado real.
-- [ ] OBJ-02: Asegurar que notificación efectiva se reconoce por contenido y calce.
-- [ ] OBJ-03: Dejar restricciones legales, operativas y de autonomía visibles para desarrollo.
+- [ ] OBJ-01: Implementar el flujo para clasificar el resultado del receptor leyendo el estampado real del PDF.
+- [ ] OBJ-02: Hacer explícito el gatillante de entrada, el resultado esperado y los bloqueos.
+- [ ] OBJ-03: Respetar la autonomía declarada del ticket y derivar a humano cuando corresponda.
 
 ## 3. No-Goals
 
 > Lo que explícitamente NO entra en este ticket.
 
-- Definir arquitectura, librerías, servicios o decisiones internas de implementación.
-- Cambiar reglas legales fuera del flujo de cobranza judicial automotriz por pagaré.
-- Automatizar decisiones reservadas al abogado o a la financiera.
+- Automatizar decisiones reservadas al abogado, a la financiera o al receptor cuando la matriz de autonomía exige revisión.
+- Cambiar reglas legales del juicio ejecutivo de cobranza automotriz por pagaré.
+- Definir arquitectura técnica, proveedor OCR, modelo de datos físico o integración específica fuera del alcance funcional del PRD.
+- Automatizar la presentación real en OJV/PJUD en esta iteración; el ingreso efectivo se mantiene manual salvo que un ticket futuro lo habilite.
 
 ## 4. User Stories
 
 | Como... | Quiero... | Para... |
 |---------|-----------|---------|
-| Equipo legal y operaciones | operar y validar: clasificar el resultado del receptor leyendo el estampado real | mantener el flujo judicial correcto y trazable |
-| Equipo técnico | contar con reglas funcionales claras sobre lectura de estampados del receptor | desarrollar sin suponer criterios legales o de negocio |
+| Abogado/a o procurador/a | Clasificar el resultado del receptor leyendo el estampado real del PDF. | avanzar causas sin perder control sobre decisiones legales |
+| Operaciones del estudio | tener bloqueos, motivos y evidencias visibles | priorizar correcciones y evitar causas abandonadas |
+| Equipo técnico | implementar sin inventar estados legales ni criterios de negocio fuera de la especificación | construir el flujo correcto desde la primera implementación |
 
 ## 5. Requerimientos Funcionales
 
 ### 5.1 Comportamiento esperado
 
-- **RF-01:** Debe garantizar que notificación efectiva se reconoce por contenido y calce.
-- **RF-02:** Debe documentar que búsqueda positiva habilita pasos posteriores de domicilio.
-- **RF-03:** Debe documentar la regla funcional o consecuencia: búsqueda negativa consume intento.
-- **RF-04:** Debe dejar trazabilidad suficiente para auditar la decisión o estado del flujo.
+- **RF-01:** El sistema debe permitir clasificar el resultado del receptor leyendo el estampado real del PDF.
+- **RF-02:** Clasificaciones: notificación efectiva, búsqueda positiva, búsqueda negativa.
+- **RF-03:** El nombre buscado debe calzar con el deudor.
+- **RF-04:** Búsqueda negativa consume intento; búsqueda positiva habilita Art. 44.
+- **RF-05:** Toda acción debe quedar trazada con causa, documento/fuente, actor y fecha cuando aplique.
+- **RF-06:** Si falta información mínima o la confianza es baja, el flujo debe detener el avance automático y explicar el motivo.
 
 ## 6. Criterios de Aceptación
 
 > IMPORTANTE: machine-readable. El validador automático de GitHub PRs los usa.
 
-- [ ] AC-01: La notificación efectiva se reconoce por contenido y calce.
-- [ ] AC-02: La búsqueda positiva habilita pasos posteriores de domicilio.
-- [ ] AC-03: La búsqueda negativa consume intento.
-- [ ] AC-04: El flujo registra fecha, actor u origen y motivo de cada cambio de estado relevante.
+- [ ] AC-01: Notificación efectiva se reconoce por contenido y calce.
+- [ ] AC-02: Búsqueda positiva no se trata como notificación final.
+- [ ] AC-03: Búsqueda negativa consume intento en la pauta.
+- [ ] AC-04: Estampado de otra causa genera alerta.
+- [ ] AC-05: El caso queda trazado con fuente o evidencia suficiente para auditoría funcional.
 
-## 7. Decisiones y Preguntas Abiertas
+## 7. Notas de implementación
 
-| # | Pregunta | Decisión | Owner |
-|---|----------|----------|-------|
-| 1 | ¿La regla funcional requiere validación adicional del estudio antes de desarrollo? | [Pendiente de confirmar] | Producto / Legal |
-| 2 | ¿Existen ejemplos reales o plantillas que deban adjuntarse al ticket? | [Pendiente de adjuntar] | Operaciones |
+- Fuente funcional principal: `docs/especificacion-scraper-pjud-v3-2-corregido.md` y reglas condensadas en `.claude/skills/cobranza-legal-pjud/SKILL.md`.
+- Fase asignada: [F3] Notificación y flujo post-monitor. Esta fase ordena implementación y prioridad, pero no cambia el slug ni el parent de Linear.
+- El front actual es un prototipo con mock data; los PRDs describen comportamiento funcional esperado para implementación real.
+- Validar siempre los casos borde con documentos reales o fixtures que representen pagarés/CAV/estampados escaneados.
 
-## 8. Trabajo Futuro
+## 8. Fuera de alcance v1
 
-- Automatizar pruebas funcionales sobre los escenarios legales cubiertos por este ticket.
-- Ajustar el alcance cuando existan datos reales de operación y retroalimentación del estudio.
+- Castigar causas automáticamente.
+- Responder defensas del deudor.

@@ -4,6 +4,7 @@
 **Creado:** 2026-07-14 | **Reunión:** Levantamiento proyecto cobranza judicial PJUD
 **Participantes:** Equipo Producto ProdBooster, Equipo Legal/Operaciones, Equipo Desarrollo
 **Estado:** Draft
+**Fase:** [F5] Operación diaria y acciones en lote
 **Tipo Linear:** Subissue
 **Parent Linear Issue:** procurador-bandejas-acciones-lote
 **Autonomía:** CON APROBACIÓN
@@ -12,55 +13,60 @@
 
 ## 1. Problema y Contexto
 
-Este subissue pertenece a `procurador-bandejas-acciones-lote`. El foco es explicar contexto y proponer acciones sin saltarse aprobaciones. El PRD describe qué debe pasar desde el punto de vista legal y operativo, sin cerrar el cómo técnico.
+[F5] Operación diaria y acciones en lote. Este ticket cubre permitir conversación por causa con propuestas accionables y documentos asociados. El dolor operativo de Cobranza Judicial es que el seguimiento manual de cientos de causas provoca atrasos, omisiones y pérdida de recuperación. El PRD debe dejar claro qué puede resolver el agente, qué queda bajo aprobación y qué se deriva a revisión humana.
 
 ## 2. Objetivos
 
-- [ ] OBJ-01: Confirmar y documentar funcionalmente: explicar contexto y proponer acciones sin saltarse aprobaciones.
-- [ ] OBJ-02: Asegurar que las propuestas requieren acción explícita.
-- [ ] OBJ-03: Dejar restricciones legales, operativas y de autonomía visibles para desarrollo.
+- [ ] OBJ-01: Implementar el flujo para permitir conversación por causa con propuestas accionables y documentos asociados.
+- [ ] OBJ-02: Hacer explícito el gatillante de entrada, el resultado esperado y los bloqueos.
+- [ ] OBJ-03: Respetar la autonomía declarada del ticket y derivar a humano cuando corresponda.
 
 ## 3. No-Goals
 
 > Lo que explícitamente NO entra en este ticket.
 
-- Definir arquitectura, librerías, servicios o decisiones internas de implementación.
-- Cambiar reglas legales fuera del flujo de cobranza judicial automotriz por pagaré.
-- Automatizar decisiones reservadas al abogado o a la financiera.
+- Automatizar decisiones reservadas al abogado, a la financiera o al receptor cuando la matriz de autonomía exige revisión.
+- Cambiar reglas legales del juicio ejecutivo de cobranza automotriz por pagaré.
+- Definir arquitectura técnica, proveedor OCR, modelo de datos físico o integración específica fuera del alcance funcional del PRD.
+- Automatizar la presentación real en OJV/PJUD en esta iteración; el ingreso efectivo se mantiene manual salvo que un ticket futuro lo habilite.
 
 ## 4. User Stories
 
 | Como... | Quiero... | Para... |
 |---------|-----------|---------|
-| Equipo legal y operaciones | operar y validar: explicar contexto y proponer acciones sin saltarse aprobaciones | mantener el flujo judicial correcto y trazable |
-| Equipo técnico | contar con reglas funcionales claras sobre chat del procurador con propuestas accionables | desarrollar sin suponer criterios legales o de negocio |
+| Abogado/a o procurador/a | Permitir conversación por causa con propuestas accionables y documentos asociados. | avanzar causas sin perder control sobre decisiones legales |
+| Operaciones del estudio | tener bloqueos, motivos y evidencias visibles | priorizar correcciones y evitar causas abandonadas |
+| Equipo técnico | implementar sin inventar estados legales ni criterios de negocio fuera de la especificación | construir el flujo correcto desde la primera implementación |
 
 ## 5. Requerimientos Funcionales
 
 ### 5.1 Comportamiento esperado
 
-- **RF-01:** Debe garantizar que las propuestas requieren acción explícita.
-- **RF-02:** Debe documentar que los escritos generados se abren editables.
-- **RF-03:** Debe documentar la regla funcional o consecuencia: las líneas rojas se respetan en excepciones y traslados.
-- **RF-04:** Debe dejar trazabilidad suficiente para auditar la decisión o estado del flujo.
+- **RF-01:** El sistema debe permitir permitir conversación por causa con propuestas accionables y documentos asociados.
+- **RF-02:** Los botones disparan flujos definidos, no acciones opacas.
+- **RF-03:** Debe respetar matriz de autonomía.
+- **RF-04:** Excepciones y traslados siempre quedan como solo humano.
+- **RF-05:** Toda acción debe quedar trazada con causa, documento/fuente, actor y fecha cuando aplique.
+- **RF-06:** Si falta información mínima o la confianza es baja, el flujo debe detener el avance automático y explicar el motivo.
 
 ## 6. Criterios de Aceptación
 
 > IMPORTANTE: machine-readable. El validador automático de GitHub PRs los usa.
 
-- [ ] AC-01: Las propuestas requieren acción explícita.
-- [ ] AC-02: Los escritos generados se abren editables.
-- [ ] AC-03: Las líneas rojas se respetan en excepciones y traslados.
-- [ ] AC-04: El flujo registra fecha, actor u origen y motivo de cada cambio de estado relevante.
+- [ ] AC-01: El chat muestra propuesta, evidencia y acción primaria.
+- [ ] AC-02: Una propuesta ejecutada deja registro.
+- [ ] AC-03: El agente puede preparar escritos estándar editables.
+- [ ] AC-04: No responde defensas de fondo.
+- [ ] AC-05: El caso queda trazado con fuente o evidencia suficiente para auditoría funcional.
 
-## 7. Decisiones y Preguntas Abiertas
+## 7. Notas de implementación
 
-| # | Pregunta | Decisión | Owner |
-|---|----------|----------|-------|
-| 1 | ¿La regla funcional requiere validación adicional del estudio antes de desarrollo? | [Pendiente de confirmar] | Producto / Legal |
-| 2 | ¿Existen ejemplos reales o plantillas que deban adjuntarse al ticket? | [Pendiente de adjuntar] | Operaciones |
+- Fuente funcional principal: `docs/especificacion-scraper-pjud-v3-2-corregido.md` y reglas condensadas en `.claude/skills/cobranza-legal-pjud/SKILL.md`.
+- Fase asignada: [F5] Operación diaria y acciones en lote. Esta fase ordena implementación y prioridad, pero no cambia el slug ni el parent de Linear.
+- El front actual es un prototipo con mock data; los PRDs describen comportamiento funcional esperado para implementación real.
+- Validar siempre los casos borde con documentos reales o fixtures que representen pagarés/CAV/estampados escaneados.
 
-## 8. Trabajo Futuro
+## 8. Fuera de alcance v1
 
-- Automatizar pruebas funcionales sobre los escenarios legales cubiertos por este ticket.
-- Ajustar el alcance cuando existan datos reales de operación y retroalimentación del estudio.
+- Ocultar bloqueos legales por optimizar volumen.
+- Convertir recordatorios internos en plazos legales.

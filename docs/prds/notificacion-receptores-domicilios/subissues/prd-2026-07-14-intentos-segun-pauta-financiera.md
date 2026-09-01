@@ -4,6 +4,7 @@
 **Creado:** 2026-07-14 | **Reunión:** Levantamiento proyecto cobranza judicial PJUD
 **Participantes:** Equipo Producto ProdBooster, Equipo Legal/Operaciones, Equipo Desarrollo
 **Estado:** Draft
+**Fase:** [F3] Notificación y flujo post-monitor
 **Tipo Linear:** Subissue
 **Parent Linear Issue:** notificacion-receptores-domicilios
 **Autonomía:** AUTOMÁTICO con decisión humana al límite
@@ -12,55 +13,60 @@
 
 ## 1. Problema y Contexto
 
-Este subissue pertenece a `notificacion-receptores-domicilios`. El foco es contar búsquedas negativas según los límites definidos por financiera. El PRD describe qué debe pasar desde el punto de vista legal y operativo, sin cerrar el cómo técnico.
+[F3] Notificación y flujo post-monitor. Este ticket cubre contar intentos de notificación según política de Tanner, OLX u otra financiera. El dolor operativo de Cobranza Judicial es que el seguimiento manual de cientos de causas provoca atrasos, omisiones y pérdida de recuperación. El PRD debe dejar claro qué puede resolver el agente, qué queda bajo aprobación y qué se deriva a revisión humana.
 
 ## 2. Objetivos
 
-- [ ] OBJ-01: Confirmar y documentar funcionalmente: contar búsquedas negativas según los límites definidos por financiera.
-- [ ] OBJ-02: Asegurar que cada búsqueda negativa consume intento.
-- [ ] OBJ-03: Dejar restricciones legales, operativas y de autonomía visibles para desarrollo.
+- [ ] OBJ-01: Implementar el flujo para contar intentos de notificación según política de Tanner, OLX u otra financiera.
+- [ ] OBJ-02: Hacer explícito el gatillante de entrada, el resultado esperado y los bloqueos.
+- [ ] OBJ-03: Respetar la autonomía declarada del ticket y derivar a humano cuando corresponda.
 
 ## 3. No-Goals
 
 > Lo que explícitamente NO entra en este ticket.
 
-- Definir arquitectura, librerías, servicios o decisiones internas de implementación.
-- Cambiar reglas legales fuera del flujo de cobranza judicial automotriz por pagaré.
-- Automatizar decisiones reservadas al abogado o a la financiera.
+- Automatizar decisiones reservadas al abogado, a la financiera o al receptor cuando la matriz de autonomía exige revisión.
+- Cambiar reglas legales del juicio ejecutivo de cobranza automotriz por pagaré.
+- Definir arquitectura técnica, proveedor OCR, modelo de datos físico o integración específica fuera del alcance funcional del PRD.
+- Automatizar la presentación real en OJV/PJUD en esta iteración; el ingreso efectivo se mantiene manual salvo que un ticket futuro lo habilite.
 
 ## 4. User Stories
 
 | Como... | Quiero... | Para... |
 |---------|-----------|---------|
-| Equipo legal y operaciones | operar y validar: contar búsquedas negativas según los límites definidos por financiera | mantener el flujo judicial correcto y trazable |
-| Equipo técnico | contar con reglas funcionales claras sobre intentos según pauta financiera | desarrollar sin suponer criterios legales o de negocio |
+| Abogado/a o procurador/a | Contar intentos de notificación según política de Tanner, OLX u otra financiera. | avanzar causas sin perder control sobre decisiones legales |
+| Operaciones del estudio | tener bloqueos, motivos y evidencias visibles | priorizar correcciones y evitar causas abandonadas |
+| Equipo técnico | implementar sin inventar estados legales ni criterios de negocio fuera de la especificación | construir el flujo correcto desde la primera implementación |
 
 ## 5. Requerimientos Funcionales
 
 ### 5.1 Comportamiento esperado
 
-- **RF-01:** Debe garantizar que cada búsqueda negativa consume intento.
-- **RF-02:** Debe documentar que el límite depende de la financiera configurada.
-- **RF-03:** Debe documentar la regla funcional o consecuencia: castigar o reasignar queda como SOLO HUMANO.
-- **RF-04:** Debe dejar trazabilidad suficiente para auditar la decisión o estado del flujo.
+- **RF-01:** El sistema debe permitir contar intentos de notificación según política de Tanner, OLX u otra financiera.
+- **RF-02:** Tanner usa 2 intentos como referencia.
+- **RF-03:** OLX permite hasta 5 intentos.
+- **RF-04:** Al límite, el agente alerta; no castiga automáticamente.
+- **RF-05:** Toda acción debe quedar trazada con causa, documento/fuente, actor y fecha cuando aplique.
+- **RF-06:** Si falta información mínima o la confianza es baja, el flujo debe detener el avance automático y explicar el motivo.
 
 ## 6. Criterios de Aceptación
 
 > IMPORTANTE: machine-readable. El validador automático de GitHub PRs los usa.
 
-- [ ] AC-01: Cada búsqueda negativa consume intento.
-- [ ] AC-02: El límite depende de la financiera configurada.
-- [ ] AC-03: Castigar o reasignar una causa queda como SOLO HUMANO.
-- [ ] AC-04: El flujo registra fecha, actor u origen y motivo de cada cambio de estado relevante.
+- [ ] AC-01: Cada búsqueda negativa incrementa contador de intento.
+- [ ] AC-02: La pauta activa define límite por financiera.
+- [ ] AC-03: Al acercarse al último intento se muestra alerta.
+- [ ] AC-04: Castigo o nuevo domicilio queda como decisión humana.
+- [ ] AC-05: El caso queda trazado con fuente o evidencia suficiente para auditoría funcional.
 
-## 7. Decisiones y Preguntas Abiertas
+## 7. Notas de implementación
 
-| # | Pregunta | Decisión | Owner |
-|---|----------|----------|-------|
-| 1 | ¿La regla funcional requiere validación adicional del estudio antes de desarrollo? | [Pendiente de confirmar] | Producto / Legal |
-| 2 | ¿Existen ejemplos reales o plantillas que deban adjuntarse al ticket? | [Pendiente de adjuntar] | Operaciones |
+- Fuente funcional principal: `docs/especificacion-scraper-pjud-v3-2-corregido.md` y reglas condensadas en `.claude/skills/cobranza-legal-pjud/SKILL.md`.
+- Fase asignada: [F3] Notificación y flujo post-monitor. Esta fase ordena implementación y prioridad, pero no cambia el slug ni el parent de Linear.
+- El front actual es un prototipo con mock data; los PRDs describen comportamiento funcional esperado para implementación real.
+- Validar siempre los casos borde con documentos reales o fixtures que representen pagarés/CAV/estampados escaneados.
 
-## 8. Trabajo Futuro
+## 8. Fuera de alcance v1
 
-- Automatizar pruebas funcionales sobre los escenarios legales cubiertos por este ticket.
-- Ajustar el alcance cuando existan datos reales de operación y retroalimentación del estudio.
+- Castigar causas automáticamente.
+- Responder defensas del deudor.

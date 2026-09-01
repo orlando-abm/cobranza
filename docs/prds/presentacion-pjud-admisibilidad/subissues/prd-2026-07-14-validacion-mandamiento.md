@@ -4,6 +4,7 @@
 **Creado:** 2026-07-14 | **Reunión:** Levantamiento proyecto cobranza judicial PJUD
 **Participantes:** Equipo Producto ProdBooster, Equipo Legal/Operaciones, Equipo Desarrollo
 **Estado:** Draft
+**Fase:** [F2] Ingreso manual y monitoreo PJUD
 **Tipo Linear:** Subissue
 **Parent Linear Issue:** presentacion-pjud-admisibilidad
 **Autonomía:** CON APROBACIÓN
@@ -12,55 +13,59 @@
 
 ## 1. Problema y Contexto
 
-Este subissue pertenece a `presentacion-pjud-admisibilidad`. El foco es comparar mandamiento contra demanda presentada antes de habilitar la siguiente etapa. El PRD describe qué debe pasar desde el punto de vista legal y operativo, sin cerrar el cómo técnico.
+[F2] Ingreso manual y monitoreo PJUD. Este ticket cubre comparar mandamiento de ejecución y embargo contra la demanda presentada. El dolor operativo de Cobranza Judicial es que el seguimiento manual de cientos de causas provoca atrasos, omisiones y pérdida de recuperación. El PRD debe dejar claro qué puede resolver el agente, qué queda bajo aprobación y qué se deriva a revisión humana.
 
 ## 2. Objetivos
 
-- [ ] OBJ-01: Confirmar y documentar funcionalmente: comparar mandamiento contra demanda presentada antes de habilitar la siguiente etapa.
-- [ ] OBJ-02: Asegurar que nombre, RUT, monto, financiera, representante y avales se comparan cuando existan.
-- [ ] OBJ-03: Dejar restricciones legales, operativas y de autonomía visibles para desarrollo.
+- [ ] OBJ-01: Implementar el flujo para comparar mandamiento de ejecución y embargo contra la demanda presentada.
+- [ ] OBJ-02: Hacer explícito el gatillante de entrada, el resultado esperado y los bloqueos.
+- [ ] OBJ-03: Respetar la autonomía declarada del ticket y derivar a humano cuando corresponda.
 
 ## 3. No-Goals
 
 > Lo que explícitamente NO entra en este ticket.
 
-- Definir arquitectura, librerías, servicios o decisiones internas de implementación.
-- Cambiar reglas legales fuera del flujo de cobranza judicial automotriz por pagaré.
-- Automatizar decisiones reservadas al abogado o a la financiera.
+- Automatizar decisiones reservadas al abogado, a la financiera o al receptor cuando la matriz de autonomía exige revisión.
+- Cambiar reglas legales del juicio ejecutivo de cobranza automotriz por pagaré.
+- Definir arquitectura técnica, proveedor OCR, modelo de datos físico o integración específica fuera del alcance funcional del PRD.
 
 ## 4. User Stories
 
 | Como... | Quiero... | Para... |
 |---------|-----------|---------|
-| Equipo legal y operaciones | operar y validar: comparar mandamiento contra demanda presentada antes de habilitar la siguiente etapa | mantener el flujo judicial correcto y trazable |
-| Equipo técnico | contar con reglas funcionales claras sobre validación campo a campo del mandamiento | desarrollar sin suponer criterios legales o de negocio |
+| Abogado/a o procurador/a | Comparar mandamiento de ejecución y embargo contra la demanda presentada. | avanzar causas sin perder control sobre decisiones legales |
+| Operaciones del estudio | tener bloqueos, motivos y evidencias visibles | priorizar correcciones y evitar causas abandonadas |
+| Equipo técnico | implementar sin inventar estados legales ni criterios de negocio fuera de la especificación | construir el flujo correcto desde la primera implementación |
 
 ## 5. Requerimientos Funcionales
 
 ### 5.1 Comportamiento esperado
 
-- **RF-01:** Debe garantizar que nombre, RUT, monto, financiera, representante y avales se comparan cuando existan.
-- **RF-02:** Debe documentar que mandamiento con diferencia bloquea avance.
-- **RF-03:** Debe documentar la regla funcional o consecuencia: rectifíquese queda como borrador editable para firma.
-- **RF-04:** Debe dejar trazabilidad suficiente para auditar la decisión o estado del flujo.
+- **RF-01:** El sistema debe permitir comparar mandamiento de ejecución y embargo contra la demanda presentada.
+- **RF-02:** Comparar nombre completo, RUT, monto, financiera, representante legal y avales.
+- **RF-03:** Errores de monto o partes bloquean notificación.
+- **RF-04:** Si no calza, pre-redactar rectifíquese para revisión.
+- **RF-05:** Toda acción debe quedar trazada con causa, documento/fuente, actor y fecha cuando aplique.
+- **RF-06:** Si falta información mínima o la confianza es baja, el flujo debe detener el avance automático y explicar el motivo.
 
 ## 6. Criterios de Aceptación
 
 > IMPORTANTE: machine-readable. El validador automático de GitHub PRs los usa.
 
-- [ ] AC-01: Nombre, RUT, monto, financiera, representante y avales se comparan cuando existen.
-- [ ] AC-02: Un mandamiento con diferencia bloquea el avance.
-- [ ] AC-03: El rectifíquese queda como borrador editable para firma.
-- [ ] AC-04: El flujo registra fecha, actor u origen y motivo de cada cambio de estado relevante.
+- [ ] AC-01: Un mandamiento correcto habilita avanzar a notificación.
+- [ ] AC-02: Un mandamiento con monto incorrecto queda en revisión.
+- [ ] AC-03: El diff muestra demanda versus mandamiento por campo.
+- [ ] AC-04: La rectificación preparada no se presenta sin firma humana.
+- [ ] AC-05: El caso queda trazado con fuente o evidencia suficiente para auditoría funcional.
 
-## 7. Decisiones y Preguntas Abiertas
+## 7. Notas de implementación
 
-| # | Pregunta | Decisión | Owner |
-|---|----------|----------|-------|
-| 1 | ¿La regla funcional requiere validación adicional del estudio antes de desarrollo? | [Pendiente de confirmar] | Producto / Legal |
-| 2 | ¿Existen ejemplos reales o plantillas que deban adjuntarse al ticket? | [Pendiente de adjuntar] | Operaciones |
+- Fuente funcional principal: `docs/especificacion-scraper-pjud-v3-2-corregido.md` y reglas condensadas en `.claude/skills/cobranza-legal-pjud/SKILL.md`.
+- Fase asignada: [F2] Ingreso manual y monitoreo PJUD. Esta fase ordena implementación y prioridad, pero no cambia el slug ni el parent de Linear.
+- El front actual es un prototipo con mock data; los PRDs describen comportamiento funcional esperado para implementación real.
+- Validar siempre los casos borde con documentos reales o fixtures que representen pagarés/CAV/estampados escaneados.
 
-## 8. Trabajo Futuro
+## 8. Fuera de alcance v1
 
-- Automatizar pruebas funcionales sobre los escenarios legales cubiertos por este ticket.
-- Ajustar el alcance cuando existan datos reales de operación y retroalimentación del estudio.
+- Automatizar login, firma o envío final OJV.
+- Contestar rechazos o recursos sin aprobación humana.

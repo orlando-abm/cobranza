@@ -18,7 +18,7 @@
 ### demanda-ingesta-validacion
 - **Título:** Demanda: ingesta y validación documental
 - **Archivo:** `demanda-ingesta-validacion/issue.md`
-- **Fase:** 01 Demanda
+- **Fase:** [F1] Creación de demandas
 - **Prioridad:** P0
 - **Dependencia funcional:** ver flujo legal previo y subissues asociados.
 
@@ -34,7 +34,7 @@
 ### demanda-redaccion-revision
 - **Título:** Demanda: redacción y revisión previa
 - **Archivo:** `demanda-redaccion-revision/issue.md`
-- **Fase:** 02 Redacción previa
+- **Fase:** [F1] Creación de demandas
 - **Prioridad:** P0
 - **Dependencia funcional:** ver flujo legal previo y subissues asociados.
 
@@ -49,13 +49,13 @@
 ### presentacion-pjud-admisibilidad
 - **Título:** Presentación PJUD y admisibilidad
 - **Archivo:** `presentacion-pjud-admisibilidad/issue.md`
-- **Fase:** 03 Presentación y admisibilidad
+- **Fase:** [F2] Ingreso manual y monitoreo PJUD
 - **Prioridad:** P0
 - **Dependencia funcional:** ver flujo legal previo y subissues asociados.
 
 | Subissue | Archivo | Prioridad | Autonomía |
 |----------|---------|-----------|-----------|
-| flujo-multifirma-ojv | `presentacion-pjud-admisibilidad/subissues/prd-2026-07-14-flujo-multifirma-ojv.md` | P1 | CON APROBACIÓN |
+| flujo-multifirma-ojv | `presentacion-pjud-admisibilidad/subissues/prd-2026-07-14-flujo-multifirma-ojv.md` | P2 | CON APROBACIÓN |
 | marcar-demanda-presentada | `presentacion-pjud-admisibilidad/subissues/prd-2026-07-14-marcar-demanda-presentada.md` | P0 | CON APROBACIÓN |
 | previo-a-proveer | `presentacion-pjud-admisibilidad/subissues/prd-2026-07-14-previo-a-proveer.md` | P0 | CON APROBACIÓN |
 | rechazo-reposicion-humana | `presentacion-pjud-admisibilidad/subissues/prd-2026-07-14-rechazo-reposicion-humana.md` | P0 | SOLO HUMANO |
@@ -64,7 +64,7 @@
 ### monitor-pjud-clasificacion
 - **Título:** Monitor PJUD y clasificación de actuaciones
 - **Archivo:** `monitor-pjud-clasificacion/issue.md`
-- **Fase:** 04 Monitor PJUD
+- **Fase:** [F2] Ingreso manual y monitoreo PJUD
 - **Prioridad:** P0
 - **Dependencia funcional:** ver flujo legal previo y subissues asociados.
 
@@ -78,7 +78,7 @@
 ### notificacion-receptores-domicilios
 - **Título:** Notificación, receptores y domicilios
 - **Archivo:** `notificacion-receptores-domicilios/issue.md`
-- **Fase:** 05 Notificación
+- **Fase:** [F3] Notificación y flujo post-monitor
 - **Prioridad:** P0
 - **Dependencia funcional:** ver flujo legal previo y subissues asociados.
 
@@ -93,7 +93,7 @@
 ### apremio-excepciones-traslados
 - **Título:** Apremio, excepciones y traslados
 - **Archivo:** `apremio-excepciones-traslados/issue.md`
-- **Fase:** 06 Apremio paralelo
+- **Fase:** [F3] Notificación y apremio paralelo
 - **Prioridad:** P0
 - **Dependencia funcional:** ver flujo legal previo y subissues asociados.
 
@@ -107,7 +107,7 @@
 ### embargo-registro-civil
 - **Título:** Embargo y Registro Civil
 - **Archivo:** `embargo-registro-civil/issue.md`
-- **Fase:** 07 Embargo y RC
+- **Fase:** [F4] Embargo y Registro Civil
 - **Prioridad:** P0
 - **Dependencia funcional:** ver flujo legal previo y subissues asociados.
 
@@ -124,7 +124,7 @@
 ### procurador-bandejas-acciones-lote
 - **Título:** Procurador, bandejas y acciones en lote
 - **Archivo:** `procurador-bandejas-acciones-lote/issue.md`
-- **Fase:** 08 Operación diaria
+- **Fase:** [F5] Operación diaria y acciones en lote
 - **Prioridad:** P1
 - **Dependencia funcional:** ver flujo legal previo y subissues asociados.
 
@@ -139,7 +139,7 @@
 ### informes-configuracion-cobro
 - **Título:** Informes, configuración y cobro
 - **Archivo:** `informes-configuracion-cobro/issue.md`
-- **Fase:** 09 Gestión financiera
+- **Fase:** [F5] Configuración, informes y cobro
 - **Prioridad:** P1
 - **Dependencia funcional:** ver flujo legal previo y subissues asociados.
 
@@ -154,25 +154,42 @@
 ### seguridad-consentimiento-operacion
 - **Título:** Seguridad, consentimiento y operación judicial
 - **Archivo:** `seguridad-consentimiento-operacion/issue.md`
-- **Fase:** 10 Seguridad y cumplimiento
-- **Prioridad:** P0
+- **Fase:** [F6] Seguridad y automatización PJUD posterior
+- **Prioridad:** P2
 - **Dependencia funcional:** ver flujo legal previo y subissues asociados.
 
 | Subissue | Archivo | Prioridad | Autonomía |
 |----------|---------|-----------|-----------|
-| roles-autenticacion | `seguridad-consentimiento-operacion/subissues/prd-2026-07-14-roles-autenticacion.md` | P0 | CONTROL DE ACCESO |
-| consentimiento-ley-21719 | `seguridad-consentimiento-operacion/subissues/prd-2026-07-14-consentimiento-ley-21719.md` | P0 | CON APROBACIÓN |
-| manejo-conservador-clave-unica | `seguridad-consentimiento-operacion/subissues/prd-2026-07-14-manejo-conservador-clave-unica.md` | P0 | CONTROL OPERATIVO |
+| roles-autenticacion | `seguridad-consentimiento-operacion/subissues/prd-2026-07-14-roles-autenticacion.md` | P1 | CONTROL DE ACCESO |
+| consentimiento-ley-21719 | `seguridad-consentimiento-operacion/subissues/prd-2026-07-14-consentimiento-ley-21719.md` | P2 | CON APROBACIÓN |
+| manejo-conservador-clave-unica | `seguridad-consentimiento-operacion/subissues/prd-2026-07-14-manejo-conservador-clave-unica.md` | P2 | CONTROL OPERATIVO |
 | documento-original-papel | `seguridad-consentimiento-operacion/subissues/prd-2026-07-14-documento-original-papel.md` | P1 | CON APROBACIÓN |
+
+### landing-kupera
+- **Título:** Landing pública de Kupera
+- **Archivo:** `landing-kupera/issue.md`
+- **Fase:** [F7] Sitio público y captación
+- **Prioridad:** P2
+- **Dependencia funcional:** contenido derivado del flujo legal completo; no bloquea ni es bloqueado por el producto.
+
+| Subissue | Archivo | Prioridad | Autonomía |
+|----------|---------|-----------|-----------|
+| landing-shell-y-sistema-diseno | `landing-kupera/subissues/prd-2026-08-27-landing-shell-y-sistema-diseno.md` | P2 | CONFIGURACIÓN OPERATIVA |
+| landing-hero-demo-viva | `landing-kupera/subissues/prd-2026-08-27-landing-hero-demo-viva.md` | P2 | CONFIGURACIÓN OPERATIVA |
+| landing-procurador-en-accion | `landing-kupera/subissues/prd-2026-08-27-landing-procurador-en-accion.md` | P2 | CON APROBACIÓN |
+| landing-causa-de-ejemplo | `landing-kupera/subissues/prd-2026-08-27-landing-causa-de-ejemplo.md` | P2 | CONFIGURACIÓN OPERATIVA |
+| landing-flujo-y-autonomia | `landing-kupera/subissues/prd-2026-08-27-landing-flujo-y-autonomia.md` | P2 | SOLO HUMANO |
+| landing-cta-demo-early-access | `landing-kupera/subissues/prd-2026-08-27-landing-cta-demo-early-access.md` | P2 | CON APROBACIÓN |
 
 ## Orden Funcional Sugerido
 
-1. Demanda: ingesta, validación, redacción y revisión.
-2. Presentación PJUD, admisibilidad y mandamiento.
-3. Monitor PJUD y clasificación de actuaciones.
-4. Notificación, apremio paralelo y embargo.
-5. Registro Civil, informes, cobro y configuración.
-6. Seguridad, consentimiento y operación judicial transversal.
+1. [F1] Creación de demandas: ingesta, validación, redacción y revisión previa.
+2. [F2] Ingreso manual y monitoreo PJUD: registrar Rol/presentación manual, admisibilidad, mandamiento y clasificación por contenido.
+3. [F3] Notificación y apremio paralelo: receptores, estampados, intentos, excepciones, traslados y certificado de no oposición.
+4. [F4] Embargo y Registro Civil: prevalidaciones, encargo, comprobante, reloj RC, inscripción aceptada/rechazada y cierre de etapa.
+5. [F5] Operación, configuración e informes: briefing diario, acciones en lote, pautas, receptores, semáforo y cobro.
+6. [F6] Seguridad y automatización PJUD posterior: Clave Única, consentimiento, roles avanzados y multifirma OJV cuando deje de ser manual.
+7. [F7] Sitio público y captación: landing de Kupera, marca, explicación del flujo y captura de demos y acceso anticipado. Corre en paralelo y no bloquea al producto.
 
 ## Cobertura Legal/Funcional
 
@@ -184,4 +201,4 @@
 - Apremio en paralelo: requerimiento, excepciones y traslado como líneas rojas.
 - Registro Civil: comprobante inicia reloj; inscripción aceptada cierra hito.
 - Informes, causas detenidas, hitos de cobro y pautas por financiera.
-- Consentimiento, roles, Clave Única y documentos originales en papel.
+- Roles, consentimiento y Clave Única quedan documentados como fase posterior mientras la subida PJUD siga siendo manual.

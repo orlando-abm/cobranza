@@ -4,61 +4,69 @@
 **Creado:** 2026-07-14 | **Reunión:** Levantamiento proyecto cobranza judicial PJUD
 **Participantes:** Equipo Producto ProdBooster, Equipo Legal/Operaciones, Equipo Desarrollo
 **Estado:** Draft
+**Fase:** [F6] Seguridad y automatización PJUD posterior
 **Tipo Linear:** Issue padre
 
 ---
 
 ## 1. Problema y Contexto
 
-Este issue padre agrupa una capacidad funcional completa para Linear. El foco es cubrir roles, consentimiento, Clave Única y documentos originales en papel. El PRD describe qué debe pasar desde el punto de vista legal y operativo, sin cerrar el cómo técnico.
+[F6] Seguridad y automatización PJUD posterior. Este ticket cubre definir controles de acceso, consentimiento y operación segura para etapas que impliquen credenciales o trazabilidad judicial. El dolor operativo de Cobranza Judicial es que el seguimiento manual de cientos de causas provoca atrasos, omisiones y pérdida de recuperación. El PRD debe dejar claro qué puede resolver el agente, qué queda bajo aprobación y qué se deriva a revisión humana.
 
 ## 2. Objetivos
 
-- [ ] OBJ-01: Confirmar y documentar funcionalmente: cubrir roles, consentimiento, Clave Única y documentos originales en papel.
-- [ ] OBJ-02: Asegurar que roles funcionales condicionen acciones sensibles.
-- [ ] OBJ-03: Dejar restricciones legales, operativas y de autonomía visibles para desarrollo.
+- [ ] OBJ-01: Entregar la capacidad completa para definir controles de acceso, consentimiento y operación segura para etapas que impliquen credenciales o trazabilidad judicial.
+- [ ] OBJ-02: Mantener trazabilidad por causa, documento, actor y fecha en cada cambio relevante.
+- [ ] OBJ-03: Respetar la matriz de autonomía: automático, con aprobación o solo humano según el riesgo legal.
+- [ ] OBJ-04: Dejar criterios verificables para implementación y validación funcional.
 
 ## 3. No-Goals
 
 > Lo que explícitamente NO entra en este ticket.
 
-- Definir arquitectura, librerías, servicios o decisiones internas de implementación.
-- Cambiar reglas legales fuera del flujo de cobranza judicial automotriz por pagaré.
-- Automatizar decisiones reservadas al abogado o a la financiera.
+- Automatizar decisiones reservadas al abogado, a la financiera o al receptor cuando la matriz de autonomía exige revisión.
+- Cambiar reglas legales del juicio ejecutivo de cobranza automotriz por pagaré.
+- Definir arquitectura técnica, proveedor OCR, modelo de datos físico o integración específica fuera del alcance funcional del PRD.
+- Automatizar la presentación real en OJV/PJUD en esta iteración; el ingreso efectivo se mantiene manual salvo que un ticket futuro lo habilite.
 
 ## 4. User Stories
 
 | Como... | Quiero... | Para... |
 |---------|-----------|---------|
-| Equipo legal y operaciones | operar y validar: cubrir roles, consentimiento, Clave Única y documentos originales en papel | mantener el flujo judicial correcto y trazable |
-| Equipo técnico | contar con reglas funcionales claras sobre seguridad, consentimiento y operación judicial | desarrollar sin suponer criterios legales o de negocio |
+| Abogado/a o procurador/a | coordinar y validar esta parte del flujo judicial | avanzar causas sin perder control sobre decisiones legales |
+| Operaciones del estudio | tener bloqueos, motivos y evidencias visibles | priorizar correcciones y evitar causas abandonadas |
+| Equipo técnico | implementar sin inventar estados legales ni criterios de negocio fuera de la especificación | construir el flujo correcto desde la primera implementación |
 
 ## 5. Requerimientos Funcionales
 
 ### 5.1 Comportamiento esperado
 
-- **RF-01:** Debe garantizar que roles funcionales condicionen acciones sensibles.
-- **RF-02:** Debe documentar que consentimiento Ley 21.719 quede documentado antes de operar datos sensibles.
-- **RF-03:** Debe documentar la regla funcional o consecuencia: fallos de Clave Única detengan el flujo en vez de reintentar en loop.
-- **RF-04:** Debe dejar trazabilidad suficiente para auditar la decisión o estado del flujo.
+- **RF-01:** El módulo debe cubrir de punta a punta el alcance definido: definir controles de acceso, consentimiento y operación segura para etapas que impliquen credenciales o trazabilidad judicial.
+- **RF-02:** Clave Única y OJV no son prioridad de v1 si la presentación es manual, pero deben quedar delimitadas.
+- **RF-03:** Ante error de login futuro, el sistema debe detener y alertar; nunca reintentar en loop.
+- **RF-04:** Las acciones judiciales deben quedar trazables por actor, fecha y origen.
+- **RF-05:** El documento original en papel debe registrarse cuando el flujo manual lo requiera.
+- **RF-06:** El módulo debe exponer bloqueos y motivos cuando una causa o demanda no pueda avanzar.
+- **RF-07:** El módulo debe producir evidencia suficiente para auditar por qué avanzó, quedó detenido o pasó a revisión humana.
 
 ## 6. Criterios de Aceptación
 
 > IMPORTANTE: machine-readable. El validador automático de GitHub PRs los usa.
 
-- [ ] AC-01: Los roles funcionales condicionan las acciones sensibles.
-- [ ] AC-02: El consentimiento Ley 21.719 queda documentado antes de operar datos sensibles.
-- [ ] AC-03: Los fallos de Clave Única detienen el flujo en vez de reintentar en loop.
-- [ ] AC-04: El flujo registra fecha, actor u origen y motivo de cada cambio de estado relevante.
+- [ ] AC-01: El flujo principal de `seguridad-consentimiento-operacion` queda representado con estados, entradas y salidas verificables.
+- [ ] AC-02: Los casos automáticos avanzan solo cuando cumplen todas las validaciones funcionales.
+- [ ] AC-03: Los casos con baja confianza, bloqueo legal o decisión de negocio quedan en revisión humana.
+- [ ] AC-04: Cada transición relevante conserva documento o fuente que la respalda.
+- [ ] AC-05: El módulo no ejecuta acciones marcadas como fuera de alcance v1.
 
-## 7. Decisiones y Preguntas Abiertas
+## 7. Notas de implementación
 
-| # | Pregunta | Decisión | Owner |
-|---|----------|----------|-------|
-| 1 | ¿La regla funcional requiere validación adicional del estudio antes de desarrollo? | [Pendiente de confirmar] | Producto / Legal |
-| 2 | ¿Existen ejemplos reales o plantillas que deban adjuntarse al ticket? | [Pendiente de adjuntar] | Operaciones |
+- Fuente funcional principal: `docs/especificacion-scraper-pjud-v3-2-corregido.md` y reglas condensadas en `.claude/skills/cobranza-legal-pjud/SKILL.md`.
+- Fase asignada: [F6] Seguridad y automatización PJUD posterior. Esta fase ordena implementación y prioridad, pero no cambia el slug ni el parent de Linear.
+- El front actual es un prototipo con mock data; los PRDs describen comportamiento funcional esperado para implementación real.
+- Validar siempre los casos borde con documentos reales o fixtures que representen pagarés/CAV/estampados escaneados.
 
-## 8. Trabajo Futuro
+## 8. Fuera de alcance v1
 
-- Automatizar pruebas funcionales sobre los escenarios legales cubiertos por este ticket.
-- Ajustar el alcance cuando existan datos reales de operación y retroalimentación del estudio.
+- Automatizar login o firma PJUD en la fase actual.
+- Saltarse consentimiento o trazabilidad por conveniencia operativa.

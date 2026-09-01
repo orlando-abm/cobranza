@@ -4,6 +4,7 @@
 **Creado:** 2026-07-14 | **Reunión:** Levantamiento proyecto cobranza judicial PJUD
 **Participantes:** Equipo Producto ProdBooster, Equipo Legal/Operaciones, Equipo Desarrollo
 **Estado:** Draft
+**Fase:** [F3] Notificación y flujo post-monitor
 **Tipo Linear:** Subissue
 **Parent Linear Issue:** notificacion-receptores-domicilios
 **Autonomía:** AUTOMÁTICO con prevalidaciones
@@ -12,55 +13,60 @@
 
 ## 1. Problema y Contexto
 
-Este subissue pertenece a `notificacion-receptores-domicilios`. El foco es habilitar embargo directo cuando la notificación efectiva está validada. El PRD describe qué debe pasar desde el punto de vista legal y operativo, sin cerrar el cómo técnico.
+[F3] Notificación y flujo post-monitor. Este ticket cubre gatillar preparación de embargo inmediatamente tras notificación efectiva validada. El dolor operativo de Cobranza Judicial es que el seguimiento manual de cientos de causas provoca atrasos, omisiones y pérdida de recuperación. El PRD debe dejar claro qué puede resolver el agente, qué queda bajo aprobación y qué se deriva a revisión humana.
 
 ## 2. Objetivos
 
-- [ ] OBJ-01: Confirmar y documentar funcionalmente: habilitar embargo directo cuando la notificación efectiva está validada.
-- [ ] OBJ-02: Asegurar que notificación efectiva validada habilita embargo.
-- [ ] OBJ-03: Dejar restricciones legales, operativas y de autonomía visibles para desarrollo.
+- [ ] OBJ-01: Implementar el flujo para gatillar preparación de embargo inmediatamente tras notificación efectiva validada.
+- [ ] OBJ-02: Hacer explícito el gatillante de entrada, el resultado esperado y los bloqueos.
+- [ ] OBJ-03: Respetar la autonomía declarada del ticket y derivar a humano cuando corresponda.
 
 ## 3. No-Goals
 
 > Lo que explícitamente NO entra en este ticket.
 
-- Definir arquitectura, librerías, servicios o decisiones internas de implementación.
-- Cambiar reglas legales fuera del flujo de cobranza judicial automotriz por pagaré.
-- Automatizar decisiones reservadas al abogado o a la financiera.
+- Automatizar decisiones reservadas al abogado, a la financiera o al receptor cuando la matriz de autonomía exige revisión.
+- Cambiar reglas legales del juicio ejecutivo de cobranza automotriz por pagaré.
+- Definir arquitectura técnica, proveedor OCR, modelo de datos físico o integración específica fuera del alcance funcional del PRD.
+- Automatizar la presentación real en OJV/PJUD en esta iteración; el ingreso efectivo se mantiene manual salvo que un ticket futuro lo habilite.
 
 ## 4. User Stories
 
 | Como... | Quiero... | Para... |
 |---------|-----------|---------|
-| Equipo legal y operaciones | operar y validar: habilitar embargo directo cuando la notificación efectiva está validada | mantener el flujo judicial correcto y trazable |
-| Equipo técnico | contar con reglas funcionales claras sobre notificación efectiva gatilla embargo | desarrollar sin suponer criterios legales o de negocio |
+| Abogado/a o procurador/a | Gatillar preparación de embargo inmediatamente tras notificación efectiva validada. | avanzar causas sin perder control sobre decisiones legales |
+| Operaciones del estudio | tener bloqueos, motivos y evidencias visibles | priorizar correcciones y evitar causas abandonadas |
+| Equipo técnico | implementar sin inventar estados legales ni criterios de negocio fuera de la especificación | construir el flujo correcto desde la primera implementación |
 
 ## 5. Requerimientos Funcionales
 
 ### 5.1 Comportamiento esperado
 
-- **RF-01:** Debe garantizar que notificación efectiva validada habilita embargo.
-- **RF-02:** Debe documentar que excepciones no bloquean este avance.
-- **RF-03:** Debe documentar la regla funcional o consecuencia: el hito 10% queda facturable con documento fundante.
-- **RF-04:** Debe dejar trazabilidad suficiente para auditar la decisión o estado del flujo.
+- **RF-01:** El sistema debe permitir gatillar preparación de embargo inmediatamente tras notificación efectiva validada.
+- **RF-02:** No esperar excepciones para avanzar embargo.
+- **RF-03:** Antes de encargar, validar CAV, exhorto y propietario.
+- **RF-04:** Hito de notificación 10% queda respaldado por estampado.
+- **RF-05:** Toda acción debe quedar trazada con causa, documento/fuente, actor y fecha cuando aplique.
+- **RF-06:** Si falta información mínima o la confianza es baja, el flujo debe detener el avance automático y explicar el motivo.
 
 ## 6. Criterios de Aceptación
 
 > IMPORTANTE: machine-readable. El validador automático de GitHub PRs los usa.
 
-- [ ] AC-01: La notificación efectiva validada habilita embargo.
-- [ ] AC-02: Las excepciones no bloquean este avance.
-- [ ] AC-03: El hito 10% queda facturable con documento fundante.
-- [ ] AC-04: El flujo registra fecha, actor u origen y motivo de cada cambio de estado relevante.
+- [ ] AC-01: Notificación efectiva validada cambia la causa a lista para embargo.
+- [ ] AC-02: Se genera propuesta de encargo de embargo.
+- [ ] AC-03: Excepciones en apremio se muestran en paralelo.
+- [ ] AC-04: Si prevalidación falla, el embargo queda bloqueado con motivo.
+- [ ] AC-05: El caso queda trazado con fuente o evidencia suficiente para auditoría funcional.
 
-## 7. Decisiones y Preguntas Abiertas
+## 7. Notas de implementación
 
-| # | Pregunta | Decisión | Owner |
-|---|----------|----------|-------|
-| 1 | ¿La regla funcional requiere validación adicional del estudio antes de desarrollo? | [Pendiente de confirmar] | Producto / Legal |
-| 2 | ¿Existen ejemplos reales o plantillas que deban adjuntarse al ticket? | [Pendiente de adjuntar] | Operaciones |
+- Fuente funcional principal: `docs/especificacion-scraper-pjud-v3-2-corregido.md` y reglas condensadas en `.claude/skills/cobranza-legal-pjud/SKILL.md`.
+- Fase asignada: [F3] Notificación y flujo post-monitor. Esta fase ordena implementación y prioridad, pero no cambia el slug ni el parent de Linear.
+- El front actual es un prototipo con mock data; los PRDs describen comportamiento funcional esperado para implementación real.
+- Validar siempre los casos borde con documentos reales o fixtures que representen pagarés/CAV/estampados escaneados.
 
-## 8. Trabajo Futuro
+## 8. Fuera de alcance v1
 
-- Automatizar pruebas funcionales sobre los escenarios legales cubiertos por este ticket.
-- Ajustar el alcance cuando existan datos reales de operación y retroalimentación del estudio.
+- Castigar causas automáticamente.
+- Responder defensas del deudor.
