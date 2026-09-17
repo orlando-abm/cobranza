@@ -1,0 +1,74 @@
+---
+import Ban from '@lucide/astro/icons/ban';
+import Check from '@lucide/astro/icons/check';
+import PenLine from '@lucide/astro/icons/pen-line';
+import { autonomia } from '../../content/landing';
+import Section from '../ui/Section.astro';
+import Reveal from '../ui/Reveal.astro';
+import MovementHeader from '../ui/MovementHeader.astro';
+
+interface Props {
+  folio: string;
+}
+const { folio } = Astro.props;
+
+// El icono acompaña al rótulo: el nivel nunca se comunica solo por color.
+const iconos = [Check, PenLine, Ban];
+---
+
+<Section id="autonomia" folio={folio} rhythm="statement" labelledby="autonomia-titulo">
+  <MovementHeader
+    id="autonomia-titulo"
+    eyebrow={autonomia.eyebrow}
+    title={autonomia.title}
+    titleTail={autonomia.titleTail}
+    lead={autonomia.lead}
+  />
+
+  <div class="mt-14 grid gap-px overflow-hidden rounded-2xl border border-line bg-line lg:grid-cols-3">
+    {
+      autonomia.columnas.map((columna, i) => {
+        const Icono = iconos[i] ?? Check;
+        const limite = i === 2;
+        return (
+          <Reveal delay={i * 60}>
+            <div class:list={['flex h-full flex-col p-7', limite ? 'bg-ink-2' : 'bg-ink']}>
+              <div class="flex items-center gap-2.5">
+                <Icono size={15} aria-hidden="true" class={limite ? 'text-brass-hi' : 'text-muted'} />
+                <h3
+                  class:list={[
+                    'font-mono text-[0.6875rem] tracking-[0.16em] uppercase',
+                    limite ? 'text-brass-hi' : 'text-muted',
+                  ]}
+                >
+                  {columna.nivel}
+                </h3>
+              </div>
+              <p class="mt-4 text-[0.9375rem] font-semibold text-cream">{columna.resumen}</p>
+              <ul class="mt-5 flex flex-col gap-3">
+                {columna.items.map((item) => (
+                  <li class="flex gap-3 text-sm text-muted">
+                    <span
+                      aria-hidden="true"
+                      class:list={['mt-[0.4375rem] h-1 w-1 shrink-0 rounded-full', limite ? 'bg-brass-hi' : 'bg-muted/50']}
+                    />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Reveal>
+        );
+      })
+    }
+  </div>
+
+  <Reveal delay={180}>
+    <div class="mt-12 border-l-2 border-brass-hi pl-6 sm:pl-8">
+      <p class="font-display text-[clamp(1.5rem,1.1rem+1.7vw,2.4rem)] leading-tight font-semibold text-cream">
+        {autonomia.lineaRoja}
+      </p>
+      <p class="mt-4 max-w-2xl text-lead text-muted">{autonomia.lineaRojaDetalle}</p>
+    </div>
+  </Reveal>
+</Section>

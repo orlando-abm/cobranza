@@ -1,0 +1,165 @@
+---
+import Menu from '@lucide/astro/icons/menu';
+import X from '@lucide/astro/icons/x';
+import { empresa, nav, producto } from '../../content/landing';
+import { buttonStyles } from '../ui/buttonStyles';
+import Wordmark from '../ui/Wordmark.astro';
+
+// El enlace a una sección que no se renderiza sería un ancla rota.
+const links = nav.links.filter((l) => l.href !== '#producto' || producto.capturas.length > 0);
+---
+
+<header class="fixed inset-x-0 top-0 z-40 px-4 pt-4 sm:px-6" data-nav>
+  <nav
+    aria-label="Principal"
+    class="mx-auto flex max-w-[76rem] items-center gap-3 rounded-2xl px-4 py-2.5 transition-shadow duration-300 data-scrolled:glass data-scrolled:shadow-[0_18px_50px_-24px_rgba(0,0,0,0.9)]"
+    data-nav-bar
+  >
+    <a href="#contenido" class="shrink-0 rounded-lg" aria-label={`${empresa.nombre}, ir al inicio`}>
+      <Wordmark />
+    </a>
+
+    {/* Cuatro enlaces y dos botones no caben a 768: se muestran desde lg. */}
+    <ul class="relative ml-auto hidden items-center gap-1 lg:flex" data-nav-list>
+      <span
+        aria-hidden="true"
+        class="absolute inset-y-1 left-0 rounded-full border border-line-hi bg-surface/60 opacity-0 transition-[transform,width,opacity] duration-300 ease-[var(--ease-brand)]"
+        data-nav-pill
+      ></span>
+      {
+        links.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              data-nav-link={link.href.slice(1)}
+              class="relative inline-flex min-h-11 items-center rounded-full px-4 text-sm text-muted transition-colors duration-200 hover:text-cream aria-[current=true]:text-cream"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <a href={empresa.app} class={buttonStyles({ variant: 'ghost', className: 'hidden lg:inline-flex' })}>
+      {nav.ingresar}
+    </a>
+    <a href="#contacto" class={buttonStyles({ className: 'hidden lg:inline-flex' })}>
+      {nav.cta}
+    </a>
+
+    <button
+      type="button"
+      aria-expanded="false"
+      aria-controls="nav-movil"
+      aria-label={nav.abrirMenu}
+      data-label-abrir={nav.abrirMenu}
+      data-label-cerrar={nav.cerrarMenu}
+      class="group ml-auto inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-xl text-cream transition-colors duration-200 hover:bg-surface/60 lg:hidden"
+      data-nav-toggle
+    >
+      <Menu size={20} aria-hidden="true" class="group-aria-expanded:hidden" />
+      <X size={20} aria-hidden="true" class="hidden group-aria-expanded:block" />
+    </button>
+  </nav>
+
+  <div id="nav-movil" hidden class="glass mx-auto mt-2 max-w-[76rem] rounded-2xl p-3 lg:hidden" data-nav-panel>
+    <ul class="flex flex-col">
+      {
+        links.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class="flex min-h-12 items-center rounded-xl px-4 text-sm text-muted transition-colors duration-200 hover:bg-surface/60 hover:text-cream"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <div class="mt-2 grid gap-2 sm:grid-cols-2">
+      <a href={empresa.app} class={buttonStyles({ variant: 'secondary', size: 'lg', className: 'w-full' })}>
+        {nav.ingresar}
+      </a>
+      <a href="#contacto" class={buttonStyles({ size: 'lg', className: 'w-full' })}>{nav.cta}</a>
+    </div>
+  </div>
+</header>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-nav-bar]');
+  const list = document.querySelector<HTMLElement>('[data-nav-list]');
+  const pill = document.querySelector<HTMLElement>('[data-nav-pill]');
+  const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+  const panel = document.querySelector<HTMLElement>('[data-nav-panel]');
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]')];
+
+  // Cristal al hacer scroll.
+  const onScroll = () => bar?.toggleAttribute('data-scrolled', window.scrollY > 24);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // Píldora deslizante: se mide el enlace activo contra la lista, no con offsetLeft,
+  // porque el <a> vive dentro de un <li>.
+  let activo: HTMLAnchorElement | undefined;
+  const moverPill = () => {
+    if (!list || !pill) return;
+    if (!activo) {
+      pill.style.opacity = '0';
+      return;
+    }
+    const caja = list.getBoundingClientRect();
+    const item = activo.getBoundingClientRect();
+    pill.style.transform = `translateX(${item.left - caja.left}px)`;
+    pill.style.width = `${item.width}px`;
+    pill.style.opacity = '1';
+  };
+
+  const marcar = (id: string) => {
+    activo = links.find((l) => l.dataset.navLink === id);
+    for (const l of links) l.setAttribute('aria-current', String(l === activo));
+    moverPill();
+  };
+
+  const secciones = links
+    .map((l) => document.getElementById(l.dataset.navLink ?? ''))
+    .filter((el): el is HTMLElement => el !== null);
+
+  if ('IntersectionObserver' in window && secciones.length) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) if (entry.isIntersecting) marcar(entry.target.id);
+      },
+      { rootMargin: '-45% 0px -50% 0px' },
+    );
+    for (const s of secciones) observer.observe(s);
+  }
+
+  window.addEventListener('resize', moverPill, { passive: true });
+  document.fonts?.ready.then(moverPill);
+
+  // Menú móvil.
+  const cerrar = () => {
+    if (!toggle || !panel) return;
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', toggle.dataset.labelAbrir ?? '');
+    panel.hidden = true;
+  };
+
+  toggle?.addEventListener('click', () => {
+    if (!panel) return;
+    const abrir = panel.hidden;
+    panel.hidden = !abrir;
+    toggle.setAttribute('aria-expanded', String(abrir));
+    toggle.setAttribute('aria-label', (abrir ? toggle.dataset.labelCerrar : toggle.dataset.labelAbrir) ?? '');
+  });
+
+  panel?.addEventListener('click', (event) => {
+    if ((event.target as HTMLElement).closest('a')) cerrar();
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') cerrar();
+  });
+</script>

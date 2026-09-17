@@ -1,0 +1,107 @@
+---
+/**
+ * El panel real de app.kupera.cl. Las capturas viven en src/assets/producto/
+ * y astro:assets las entrega en formatos modernos con su tamaño declarado.
+ * Si no hay capturas, la sección no se renderiza.
+ */
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import ArrowUpRight from '@lucide/astro/icons/arrow-up-right';
+import { empresa, producto } from '../../content/landing';
+import Section from '../ui/Section.astro';
+import Reveal from '../ui/Reveal.astro';
+import MovementHeader from '../ui/MovementHeader.astro';
+import { buttonStyles } from '../ui/buttonStyles';
+
+interface Props {
+  folio: string;
+}
+const { folio } = Astro.props;
+
+const archivos = import.meta.glob<{ default: ImageMetadata }>('../../assets/producto/*.{png,jpg,jpeg,webp}', {
+  eager: true,
+});
+
+const capturas = producto.capturas.map((c) => {
+  const imagen = archivos[`../../assets/producto/${c.archivo}`]?.default;
+  if (!imagen) throw new Error(`Falta la captura src/assets/producto/${c.archivo}`);
+  return { ...c, imagen };
+});
+
+const host = new URL(empresa.app).host;
+const [principal, ...resto] = capturas;
+---
+
+{
+  principal && (
+    <Section id="producto" folio={folio} labelledby="producto-titulo">
+      <MovementHeader
+        id="producto-titulo"
+        eyebrow={producto.eyebrow}
+        title={producto.title}
+        titleTail={producto.titleTail}
+        lead={producto.lead}
+      />
+
+      <Reveal delay={60}>
+        <a href={empresa.app} class={buttonStyles({ variant: 'secondary', className: 'mt-8' })}>
+          {producto.ingresar}
+          <ArrowUpRight size={15} aria-hidden="true" />
+        </a>
+      </Reveal>
+
+      <Reveal delay={120}>
+        <figure class="mt-12 overflow-hidden rounded-2xl border border-line-hi bg-ink-2 shadow-[0_40px_120px_-60px_rgba(0,0,0,0.9)]">
+          {/* Barra de navegador: deja claro que la interfaz vive en el dominio de la empresa. */}
+          <div class="flex items-center gap-3 border-b border-line px-4 py-2.5" aria-hidden="true">
+            <span class="flex gap-1.5">
+              <span class="h-2.5 w-2.5 rounded-full bg-line-hi" />
+              <span class="h-2.5 w-2.5 rounded-full bg-line-hi" />
+              <span class="h-2.5 w-2.5 rounded-full bg-line-hi" />
+            </span>
+            <span class="mx-auto rounded-md bg-ink px-3 py-1 font-mono text-[0.6875rem] text-muted">{host}</span>
+          </div>
+          <Image
+            src={principal.imagen}
+            alt={principal.alt}
+            widths={[640, 1100, 1600]}
+            sizes="(min-width: 1216px) 1100px, 100vw"
+            loading="lazy"
+            data-captura
+            class="block h-auto w-full"
+          />
+          <figcaption class="border-t border-line px-6 py-4">
+            <p class="text-[0.9375rem] font-semibold text-cream">{principal.titulo}</p>
+            <p class="mt-1 text-sm text-muted">{principal.detalle}</p>
+          </figcaption>
+        </figure>
+      </Reveal>
+
+      {resto.length > 0 && (
+        <ul role="list" class="mt-6 grid gap-6 md:grid-cols-2">
+          {resto.map((c, i) => (
+            <Reveal as="li" delay={i * 60}>
+              <figure class="h-full overflow-hidden rounded-2xl border border-line bg-ink-2">
+                <Image
+                  src={c.imagen}
+                  alt={c.alt}
+                  widths={[480, 800, 1100]}
+                  sizes="(min-width: 768px) 50vw, 100vw"
+                  loading="lazy"
+                  data-captura
+                  class="block h-auto w-full border-b border-line"
+                />
+                <figcaption class="px-6 py-4">
+                  <p class="text-[0.9375rem] font-semibold text-cream">{c.titulo}</p>
+                  <p class="mt-1 text-sm text-muted">{c.detalle}</p>
+                </figcaption>
+              </figure>
+            </Reveal>
+          ))}
+        </ul>
+      )}
+
+      <p class="mt-6 text-[0.8125rem] text-muted">{producto.nota}</p>
+    </Section>
+  )
+}

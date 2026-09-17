@@ -1,0 +1,19 @@
+---
+/**
+ * Aparición al hacer scroll, por mejora progresiva: el elemento se renderiza
+ * visible y solo `.js .reveal:not([data-revealed])` lo oculta. El observer vive
+ * en src/layouts/Base.astro.
+ */
+import type { HTMLTag } from 'astro/types';
+
+interface Props {
+  /** Retardo del stagger en ms. 60 por ítem es el ritmo de la página. */
+  delay?: number;
+  as?: HTMLTag;
+  class?: string;
+}
+
+const { delay = 0, as: Tag = 'div', class: className } = Astro.props;
+---
+
+<Tag class:list={['reveal', className]} style={`--reveal-delay: ${delay}ms`}><slot /></Tag>

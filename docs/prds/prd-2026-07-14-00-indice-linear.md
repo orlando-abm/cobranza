@@ -180,6 +180,7 @@
 | landing-causa-de-ejemplo | `landing-kupera/subissues/prd-2026-08-27-landing-causa-de-ejemplo.md` | P2 | CONFIGURACIÓN OPERATIVA |
 | landing-flujo-y-autonomia | `landing-kupera/subissues/prd-2026-08-27-landing-flujo-y-autonomia.md` | P2 | SOLO HUMANO |
 | landing-cta-demo-early-access | `landing-kupera/subissues/prd-2026-08-27-landing-cta-demo-early-access.md` | P2 | CON APROBACIÓN |
+| landing-astro-y-criterios-google | `landing-kupera/subissues/prd-2026-09-17-landing-astro-y-criterios-google.md` | P0 | CONFIGURACIÓN OPERATIVA |
 
 ## Orden Funcional Sugerido
 

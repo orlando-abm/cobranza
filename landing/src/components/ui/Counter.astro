@@ -1,0 +1,50 @@
+---
+/**
+ * Cifra con conteo animado. El valor final se renderiza siempre: solo se anima
+ * si hay JS, la cifra entra desde abajo del pliegue y no se pidió menos
+ * movimiento. Nunca queda una cifra falsa en pantalla.
+ */
+interface Props {
+  value: number;
+  suffix?: string;
+}
+const { value, suffix = '' } = Astro.props;
+---
+
+<span class="tabular-nums" data-counter={value} data-suffix={suffix}>{value}{suffix}</span>
+
+<script>
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const cifras = document.querySelectorAll<HTMLElement>('[data-counter]');
+
+  if (!reduce && 'IntersectionObserver' in window) {
+    const animar = (el: HTMLElement) => {
+      const final = Number(el.dataset.counter);
+      const sufijo = el.dataset.suffix ?? '';
+      const inicio = performance.now();
+      const tick = (ahora: number) => {
+        const t = Math.min(1, (ahora - inicio) / 900);
+        el.textContent = `${Math.round(final * (1 - (1 - t) ** 3))}${sufijo}`;
+        if (t < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          observer.unobserve(entry.target);
+          animar(entry.target as HTMLElement);
+        }
+      },
+      { rootMargin: '0px 0px -20% 0px' },
+    );
+
+    for (const el of cifras) {
+      // Si ya está a la vista se deja la cifra final: animarla la haría saltar a cero.
+      if (el.getBoundingClientRect().top < window.innerHeight) continue;
+      observer.observe(el);
+    }
+  }
+</script>

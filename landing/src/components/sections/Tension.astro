@@ -1,0 +1,48 @@
+---
+import { tension } from '../../content/landing';
+import Section from '../ui/Section.astro';
+import Reveal from '../ui/Reveal.astro';
+import Counter from '../ui/Counter.astro';
+import Spotlight from '../ui/Spotlight.astro';
+import MovementHeader from '../ui/MovementHeader.astro';
+
+interface Props {
+  folio: string;
+}
+const { folio } = Astro.props;
+---
+
+<Section id="tension" folio={folio} rhythm="statement" labelledby="tension-titulo">
+  <MovementHeader
+    id="tension-titulo"
+    eyebrow={tension.eyebrow}
+    title={tension.title}
+    titleTail={tension.titleTail}
+    lead={tension.lead}
+  />
+
+  {/* Hairline grid: los separadores son el fondo asomando por los gaps. */}
+  <ul role="list" class="mt-14 grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-3">
+    {
+      tension.datos.map((dato, i) => (
+        <Reveal as="li" delay={i * 60}>
+          <Spotlight class="h-full bg-ink">
+            <div class="flex h-full flex-col p-6 sm:p-7">
+              <p class="font-display text-[2.75rem] leading-none font-semibold text-brass-hi">
+                <Counter value={dato.cifra} suffix={dato.sufijo} />
+              </p>
+              <p class="mt-4 text-[0.9375rem] font-semibold text-cream">{dato.titulo}</p>
+              <p class="mt-2.5 text-sm text-muted">{dato.detalle}</p>
+            </div>
+          </Spotlight>
+        </Reveal>
+      ))
+    }
+  </ul>
+
+  <Reveal delay={180}>
+    <p class="mt-14 max-w-3xl font-display text-[clamp(1.35rem,1rem+1.4vw,2rem)] leading-snug text-cream">
+      {tension.remate}
+    </p>
+  </Reveal>
+</Section>

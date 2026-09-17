@@ -1,0 +1,41 @@
+---
+import Base from '../layouts/Base.astro';
+import { producto } from '../content/landing';
+import Nav from '../components/sections/Nav.astro';
+import Hero from '../components/sections/Hero.astro';
+import Tension from '../components/sections/Tension.astro';
+import Procurador from '../components/sections/Procurador.astro';
+import Producto from '../components/sections/Producto.astro';
+import CausaDeEjemplo from '../components/sections/CausaDeEjemplo.astro';
+import FlujoCompleto from '../components/sections/FlujoCompleto.astro';
+import MatrizAutonomia from '../components/sections/MatrizAutonomia.astro';
+import Equipo from '../components/sections/Equipo.astro';
+import Contacto from '../components/sections/Contacto.astro';
+import Footer from '../components/sections/Footer.astro';
+import Connector from '../components/ui/Connector.astro';
+import NoiseOverlay from '../components/ui/NoiseOverlay.astro';
+
+// Folios correlativos según las secciones que efectivamente se muestran.
+const orden = ['tension', 'procurador', ...(producto.capturas.length ? ['producto'] : []), 'causa', 'flujo', 'autonomia', 'equipo', 'contacto'];
+const folio = (id: string) => String(orden.indexOf(id) + 2).padStart(2, '0');
+---
+
+<Base>
+  <NoiseOverlay />
+  <Nav />
+  <main id="contenido">
+    <Hero />
+    <Connector />
+    <Tension folio={folio('tension')} />
+    <Connector />
+    <Procurador folio={folio('procurador')} />
+    {producto.capturas.length > 0 && <Producto folio={folio('producto')} />}
+    <CausaDeEjemplo folio={folio('causa')} />
+    <FlujoCompleto folio={folio('flujo')} />
+    <Connector />
+    <MatrizAutonomia folio={folio('autonomia')} />
+    <Equipo folio={folio('equipo')} />
+    <Contacto folio={folio('contacto')} />
+  </main>
+  <Footer />
+</Base>

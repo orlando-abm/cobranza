@@ -3,32 +3,33 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
-    "dev": "vite",
-    "build": "node scripts/check-contrast.mjs && tsc -b && vite build",
-    "lint": "oxlint",
-    "preview": "vite preview",
-    "check:contrast": "node scripts/check-contrast.mjs"
+    "dev": "astro dev --port 5180",
+    "build": "node scripts/check-contrast.mjs && astro check && astro build && node scripts/check-publicacion.mjs",
+    "preview": "astro preview --port 5180",
+    "check": "astro check",
+    "check:contrast": "node scripts/check-contrast.mjs",
+    "check:publicacion": "node scripts/check-publicacion.mjs",
+    "lint": "oxlint src scripts"
   },
   "dependencies": {
     "@fontsource-variable/fraunces": "^5.2.5",
     "@fontsource-variable/inter": "^5.2.5",
     "@fontsource-variable/jetbrains-mono": "^5.2.5",
+    "@lucide/astro": "^1.47.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.3.3",
     "clsx": "^2.1.1",
-    "lucide-react": "^0.548.0",
-    "react": "^19.2.7",
-    "react-dom": "^19.2.7",
-    "tailwind-merge": "^3.3.1"
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.3.3",
+    "@astrojs/check": "^0.9.10",
     "@types/node": "^24.13.2",
-    "@types/react": "^19.2.17",
-    "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^6.0.3",
     "oxlint": "^1.71.0",
-    "tailwindcss": "^4.3.3",
-    "typescript": "~6.0.2",
-    "vite": "^8.1.1"
+    "typescript": "~6.0.2"
   }
 }

@@ -1,0 +1,73 @@
+---
+import Clock from '@lucide/astro/icons/clock';
+import { flujo } from '../../content/landing';
+import Section from '../ui/Section.astro';
+import Reveal from '../ui/Reveal.astro';
+import Spotlight from '../ui/Spotlight.astro';
+import MovementHeader from '../ui/MovementHeader.astro';
+
+interface Props {
+  folio: string;
+}
+const { folio } = Astro.props;
+---
+
+{/* Único lugar con bento: aquí el contenido sí son piezas comparables. */}
+<Section id="flujo" folio={folio} labelledby="flujo-titulo">
+  <MovementHeader
+    id="flujo-titulo"
+    eyebrow={flujo.eyebrow}
+    title={flujo.title}
+    titleTail={flujo.titleTail}
+    lead={flujo.lead}
+  />
+
+  <ol class="mt-14 grid gap-px overflow-hidden rounded-2xl border border-line bg-line lg:grid-cols-3">
+    {
+      flujo.etapas.map((etapa, i) => (
+        <Reveal as="li" delay={i * 60}>
+          <Spotlight class="h-full bg-ink">
+            <div class="flex h-full flex-col p-7">
+              <div class="flex items-baseline gap-3">
+                <span class="font-mono text-[0.6875rem] text-brass-hi tabular-nums">{`0${i + 1}`}</span>
+                <h3 class="font-display text-xl font-semibold text-cream">{etapa.nombre}</h3>
+              </div>
+              <p class="mt-4 flex-1 text-[0.9375rem] text-muted">{etapa.resumen}</p>
+              <p class="mt-6 border-t border-line pt-4 font-mono text-[0.6875rem] tracking-wide text-brass-hi">
+                {etapa.gatillante}
+              </p>
+            </div>
+          </Spotlight>
+        </Reveal>
+      ))
+    }
+  </ol>
+
+  <div class="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+    <Reveal>
+      <div class="h-full rounded-2xl border border-line bg-ink-2/60 p-7">
+        <div class="flex items-center gap-2.5">
+          <Clock size={15} class="text-brass-hi" aria-hidden="true" />
+          <h3 class="font-mono text-[0.6875rem] tracking-[0.18em] text-brass uppercase">Relojes de plazo</h3>
+        </div>
+        <dl class="mt-6 grid gap-px overflow-hidden rounded-xl bg-line sm:grid-cols-2">
+          {
+            flujo.relojes.map((reloj) => (
+              <div class="bg-ink-2 p-4">
+                <dt class="font-mono text-lg text-cream tabular-nums">{reloj.plazo}</dt>
+                <dd class="mt-1 text-[0.8125rem] text-muted">{reloj.desde}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </Reveal>
+
+    <Reveal delay={60}>
+      <div class="h-full rounded-2xl border border-brass-hi/25 bg-surface/30 p-7">
+        <h3 class="font-display text-lg font-semibold text-cream">{flujo.paralelo.titulo}</h3>
+        <p class="mt-3 text-[0.9375rem] text-muted">{flujo.paralelo.detalle}</p>
+      </div>
+    </Reveal>
+  </div>
+</Section>

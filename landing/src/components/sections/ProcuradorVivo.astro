@@ -1,0 +1,119 @@
+---
+/**
+ * El procurador en el hero: la resolución interpretada y el borrador de
+ * respuesta ya armado. Se renderiza completo; el ciclo solo mueve el realce
+ * por filas, y solo si hay JS, está en pantalla y no se pidió menos movimiento.
+ */
+import Check from '@lucide/astro/icons/check';
+import PenLine from '@lucide/astro/icons/pen-line';
+import { procurador } from '../../content/landing';
+import Sheet from '../ui/Sheet.astro';
+
+const caso = procurador.casos[0];
+---
+
+<div class="relative" data-procurador-vivo data-total={caso.lectura.filas.length}>
+  <Sheet label={caso.salida.label} folio={caso.salida.folio} class="rotate-[-0.6deg]">
+    <p class="font-semibold uppercase">{caso.salida.encabezado}</p>
+    {caso.salida.lineas.map((linea) => <p class="mt-4 text-justify">{linea}</p>)}
+    <p class="mt-6 text-[0.8125rem] text-ink-on-paper/60 italic">{caso.salida.pie}</p>
+    {/* Aire al pie: el panel del agente se apoya encima y no debe tapar texto. */}
+    <div aria-hidden="true" class="h-28 sm:h-32"></div>
+  </Sheet>
+
+  <div
+    class="glass relative mt-[-6.5rem] ml-auto w-[min(100%,27rem)] rounded-2xl p-5 shadow-[0_40px_120px_-60px_rgba(0,0,0,0.9)] sm:mt-[-7.5rem] sm:mr-[-1rem]"
+  >
+    <div class="flex items-center gap-3 border-b border-line pb-3">
+      <span aria-hidden="true" class="h-2 w-2 shrink-0 animate-pulse-dot rounded-full bg-brass-hi motion-reduce:animate-none"></span>
+      <div class="min-w-0">
+        <p class="truncate text-sm font-semibold text-cream">Resolución interpretada</p>
+        <p class="truncate font-mono text-[0.6875rem] text-muted">{caso.etapa}</p>
+      </div>
+      <span class="ml-auto shrink-0 rounded-full border border-brass-hi/50 px-2.5 py-1 font-mono text-[0.625rem] text-brass-hi uppercase">
+        {caso.autonomia}
+      </span>
+    </div>
+
+    <div class="mt-4 grid grid-cols-2 gap-3">
+      <div class="rounded-xl border border-line bg-ink/40 p-3">
+        <p class="text-[0.625rem] tracking-wide text-muted/70 uppercase">{caso.lectura.titulo}</p>
+        <p class:list={['mt-1.5 font-mono text-[0.8125rem] text-muted', caso.lectura.tachaPrimero && 'line-through']}>
+          {caso.lectura.tituloValor}
+        </p>
+      </div>
+      <div class="rounded-xl border border-brass-hi/30 bg-surface/40 p-3">
+        <p class="text-[0.625rem] tracking-wide text-brass-hi uppercase">{caso.lectura.contenido}</p>
+        <p class="mt-1.5 text-[0.8125rem] text-cream">{caso.lectura.contenidoValor}</p>
+      </div>
+    </div>
+
+    <dl class="mt-4 flex flex-col gap-2.5">
+      {
+        caso.lectura.filas.map((f, i) => (
+          <div
+            data-fila={i}
+            class="flex gap-3 text-[0.8125rem] transition-opacity duration-300 data-[state=pending]:opacity-35"
+          >
+            <dt class="w-[6.5rem] shrink-0 font-mono text-[0.6875rem] text-muted uppercase">{f.campo}</dt>
+            <dd class="min-w-0 flex-1 text-cream">{f.valor}</dd>
+          </div>
+        ))
+      }
+    </dl>
+
+    <div class="mt-4 border-t border-line pt-4 transition-opacity duration-300 data-[state=pending]:opacity-35" data-barra>
+      <p class="font-mono text-[0.6875rem] tracking-wide text-brass-hi uppercase">{procurador.barra.estado}</p>
+      <div class="mt-3 flex flex-wrap gap-2">
+        <span class="inline-flex items-center gap-1.5 rounded-full border border-line-hi px-3 py-1.5 text-[0.8125rem] text-cream">
+          <PenLine size={13} aria-hidden="true" />
+          {procurador.barra.corregir}
+        </span>
+        <span class="inline-flex items-center gap-1.5 rounded-full bg-brass px-3 py-1.5 text-[0.8125rem] font-semibold text-ink">
+          <Check size={13} aria-hidden="true" />
+          {procurador.barra.aprobar}
+        </span>
+      </div>
+      <p class="mt-3 text-[0.75rem] text-muted">{procurador.barra.nota}</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  const raiz = document.querySelector<HTMLElement>('[data-procurador-vivo]');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (raiz && !reduce && 'IntersectionObserver' in window) {
+    const total = Number(raiz.dataset.total);
+    const filas = [...raiz.querySelectorAll<HTMLElement>('[data-fila]')];
+    const barra = raiz.querySelector<HTMLElement>('[data-barra]');
+    let paso = total;
+    let timer: number | undefined;
+
+    const pintar = () => {
+      filas.forEach((f, i) => (f.dataset.state = i < paso ? 'done' : 'pending'));
+      if (barra) barra.dataset.state = paso >= total ? 'done' : 'pending';
+    };
+
+    const iniciar = () => {
+      if (timer) return;
+      paso = 0;
+      pintar();
+      timer = window.setInterval(() => {
+        paso = paso >= total ? 0 : paso + 1;
+        pintar();
+      }, 1400);
+    };
+
+    const detener = () => {
+      window.clearInterval(timer);
+      timer = undefined;
+      paso = total;
+      pintar();
+    };
+
+    new IntersectionObserver((entries) => (entries[0]?.isIntersecting ? iniciar() : detener()), {
+      threshold: 0.25,
+    }).observe(raiz);
+  }
+</script>

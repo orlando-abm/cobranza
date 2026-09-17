@@ -1,0 +1,18 @@
+---
+/** Halo difuso fuera del viewport. Latón o navy, nunca saturado. */
+interface Props {
+  tone?: 'brass' | 'navy';
+  class?: string;
+}
+const { tone = 'brass', class: className } = Astro.props;
+---
+
+<div
+  aria-hidden="true"
+  class:list={[
+    'pointer-events-none absolute rounded-full blur-[120px]',
+    tone === 'brass' ? 'bg-brass/18' : 'bg-surface/40',
+    className,
+  ]}
+>
+</div>

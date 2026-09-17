@@ -13,14 +13,14 @@
 
 [F7] Sitio público y captación. Este ticket cubre construir la landing pública de Kupera, la marca comercial del agente de cobranza judicial automotriz por pagaré. Hasta ahora el repositorio solo contiene la aplicación interna: no existe página pública, ni presencia de marca fuera del prototipo, ni forma de que un estudio jurídico entienda el producto sin recorrer la app. El dolor operativo de Cobranza Judicial es que el seguimiento manual de cientos de causas provoca atrasos, omisiones y pérdida de recuperación, y la landing debe explicar exactamente qué parte de ese trámite ejecuta el agente, qué queda bajo aprobación y qué nunca toca.
 
-Kupera es la empresa; ProdBooster es el venture studio del que nace y aparece solo como firma en el pie. El dominio será kupera.cl y todavía no existe.
+Kupera es la empresa; ProdBooster es el venture studio del que nace. El sitio vive en kupera.cl y el producto opera en app.kupera.cl. La landing debe cumplir además los criterios de rechazo de Google for Startups (ver `prd-2026-09-17-landing-astro-y-criterios-google.md`).
 
 ## 2. Objetivos
 
 - [ ] OBJ-01: Publicar una landing que explique el flujo del juicio ejecutivo de cobranza automotriz sin simplificarlo ni inventarlo.
 - [ ] OBJ-02: Hacer explícita la matriz de autonomía, incluida la línea roja de que el agente jamás contesta excepciones ni traslados.
 - [ ] OBJ-03: Mostrar al agente interpretando resoluciones del tribunal y dejando el escrito de respuesta redactado para revisión humana.
-- [ ] OBJ-04: Capturar interés por dos vías: agendar una demo y solicitar acceso anticipado.
+- [ ] OBJ-04: Ofrecer dos vías: agendar una demo e ingresar al producto en app.kupera.cl.
 - [ ] OBJ-05: Construir la landing aislada de la aplicación, sin modificar su build, sus rutas ni sus estilos.
 - [ ] OBJ-06: Cumplir accesibilidad AA verificada y mantener el contenido legible sin depender de animaciones.
 
@@ -56,7 +56,8 @@ Kupera es la empresa; ProdBooster es el venture studio del que nace y aparece so
 - **RF-06:** El contenido debe ser legible sin JavaScript y no debe depender de animaciones para hacerse visible.
 - **RF-07:** Los pares de color texto/fondo deben verificarse contra WCAG AA de forma automática y detener el build si alguno baja de norma.
 - **RF-08:** La landing debe respetar `prefers-reduced-motion` deteniendo ciclos, apariciones y pulsos.
-- **RF-09:** Los formularios sin backend deben decir con franqueza que aún no envían, en vez de simular un envío.
+- **RF-09:** La landing no debe contener formularios sin backend ni lenguaje de lista de espera o acceso anticipado.
+- **RF-10:** La landing debe mostrar fundadores con perfiles públicos verificables, la identidad legal de la empresa y capturas reales del producto.
 
 ## 6. Criterios de Aceptación
 
@@ -70,6 +71,7 @@ Kupera es la empresa; ProdBooster es el venture studio del que nace y aparece so
 - [ ] AC-06: Ningún estado, plazo ni nivel de autonomía contradice la especificación legal.
 - [ ] AC-07: La navegación completa por teclado muestra foco visible y la página tiene un solo `h1`.
 - [ ] AC-08: La landing no publica hitos de facturación ni porcentajes de cobro.
+- [ ] AC-09: El build de producción pasa el chequeo de publicación de `landing/scripts/check-publicacion.mjs`.
 
 ## 7. Notas de implementación
 
@@ -78,10 +80,10 @@ Kupera es la empresa; ProdBooster es el venture studio del que nace y aparece so
 - Fase asignada: [F7] Sitio público y captación. Esta fase ordena implementación y prioridad, pero no cambia el slug ni el parent de Linear.
 - El front actual es un prototipo con mock data; la landing describe comportamiento funcional esperado, no promete funcionalidad construida.
 - La identidad visual hereda la paleta Tribunal de la aplicación en clave oscura: navy profundo, latón, Fraunces e Inter.
+- La landing se construye con Astro como sitio estático, siguiendo la receta de la landing de ProdBooster Studio.
 
 ## 8. Fuera de alcance v1
 
 - Backend, envío real de formularios y agenda de reuniones.
-- Renderizado en servidor o pre-renderizado para SEO.
 - Versiones en otros idiomas.
 - Blog, casos de éxito y precios.

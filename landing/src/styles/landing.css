@@ -2,9 +2,7 @@
    Sistema de diseño resuelto en design-system/kupera-landing/pages/landing.md
    Identidad "Tribunal" en oscuro: navy profundo + latón, papel marfil para los documentos. */
 
-@import '@fontsource-variable/fraunces';
-@import '@fontsource-variable/inter';
-@import '@fontsource-variable/jetbrains-mono';
+/* Las fuentes se declaran en src/layouts/Base.astro, solo con el subset latino. */
 @import 'tailwindcss';
 
 @theme {

@@ -1,0 +1,16 @@
+---
+/** Retícula de 72px con máscara radial. Evoca el pautado de un formulario judicial. */
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<div
+  aria-hidden="true"
+  class:list={[
+    'pointer-events-none absolute inset-0 grid-lines',
+    className ?? '[mask-image:radial-gradient(70%_55%_at_50%_0%,#000,transparent)]',
+  ]}
+>
+</div>

@@ -1,0 +1,17 @@
+---
+/** Etiqueta de autonomía. Nunca comunica solo por color: siempre lleva el texto. */
+interface Props {
+  valor: string;
+}
+const { valor } = Astro.props;
+const destacada = valor === 'SOLO HUMANO' || valor.startsWith('CON APROBACIÓN');
+---
+
+<span
+  class:list={[
+    'inline-flex shrink-0 items-center rounded-full border px-2.5 py-1 font-mono text-[0.625rem] tracking-wide uppercase',
+    destacada ? 'border-brass-hi/50 text-brass-hi' : 'border-line-hi text-muted',
+  ]}
+>
+  {valor}
+</span>

@@ -1,0 +1,47 @@
+---
+import { empresa, hero } from '../../content/landing';
+import Section from '../ui/Section.astro';
+import Reveal from '../ui/Reveal.astro';
+import GridBackdrop from '../ui/GridBackdrop.astro';
+import GlowBlob from '../ui/GlowBlob.astro';
+import { buttonStyles } from '../ui/buttonStyles';
+import ProcuradorVivo from './ProcuradorVivo.astro';
+---
+
+<Section id="hero" labelledby="hero-titulo" class="overflow-hidden pt-28 pb-16 md:pt-32 md:pb-24">
+  <Fragment slot="fondo">
+    <GridBackdrop />
+    <GlowBlob class="top-[-18rem] left-1/2 h-[34rem] w-[64rem] -translate-x-1/2" />
+    <GlowBlob tone="navy" class="top-[6rem] right-[-12rem] h-[28rem] w-[28rem]" />
+  </Fragment>
+
+  <div class="grid items-center gap-14 lg:grid-cols-[minmax(0,1.02fr)_minmax(0,0.98fr)] lg:gap-16">
+    <div>
+      <Reveal>
+        <p class="font-mono text-[0.6875rem] tracking-[0.18em] text-brass uppercase">{hero.eyebrow}</p>
+      </Reveal>
+      <Reveal delay={60}>
+        <h1 id="hero-titulo" class="mt-5 font-display text-display font-normal">
+          {hero.title}{' '}
+          <span class="font-semibold text-gradient-brass">{hero.titleTail}</span>
+        </h1>
+      </Reveal>
+      <Reveal delay={120}>
+        <p class="mt-7 max-w-xl text-lead text-muted">{hero.lead}</p>
+      </Reveal>
+      <Reveal delay={180}>
+        <div class="mt-9 flex flex-wrap items-center gap-3">
+          <a href="#contacto" class={buttonStyles({ size: 'lg' })}>{hero.ctaPrimario}</a>
+          <a href={empresa.app} class={buttonStyles({ variant: 'secondary', size: 'lg' })}>{hero.ctaSecundario}</a>
+        </div>
+      </Reveal>
+      <Reveal delay={240}>
+        <p class="mt-6 max-w-md text-[0.8125rem] text-muted">{hero.nota}</p>
+      </Reveal>
+    </div>
+
+    <Reveal delay={160}>
+      <ProcuradorVivo />
+    </Reveal>
+  </div>
+</Section>

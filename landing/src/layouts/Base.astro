@@ -1,0 +1,176 @@
+---
+import frauncesUrl from '@fontsource-variable/fraunces/files/fraunces-latin-wght-normal.woff2?url';
+import interUrl from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
+import monoUrl from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
+import '../styles/landing.css';
+import { empresa, equipo, nav, seo } from '../content/landing';
+import { INDEXABLE, abs } from '../lib/site';
+
+const canonical = abs('/');
+const ogImage = abs('/og-image.png');
+
+// Solo el subset latino: el resto de los archivos de las fuentes no se usa.
+const RANGO_LATINO =
+  'U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD';
+
+const fuente = (familia: string, url: string) =>
+  `@font-face{font-family:'${familia}';font-style:normal;font-display:swap;font-weight:100 900;` +
+  `src:url(${url}) format('woff2-variations');unicode-range:${RANGO_LATINO};}`;
+
+const fontFaces = [
+  fuente('Fraunces Variable', frauncesUrl),
+  fuente('Inter Variable', interUrl),
+  fuente('JetBrains Mono Variable', monoUrl),
+].join('');
+
+// Datos estructurados: la identidad verificable de la empresa y sus fundadores.
+const fundadores = equipo.miembros.map((m) => ({
+  '@type': 'Person',
+  name: m.nombre,
+  jobTitle: m.cargo,
+  ...(m.linkedin ? { sameAs: [m.linkedin] } : {}),
+}));
+
+const organizacion: Record<string, unknown> = {
+  '@type': 'Organization',
+  '@id': abs('/#organization'),
+  name: empresa.nombre,
+  url: canonical,
+  logo: abs('/favicon.svg'),
+  description: empresa.descriptor,
+  areaServed: { '@type': 'Country', name: 'Chile' },
+  founder: fundadores,
+  parentOrganization: {
+    '@type': 'Organization',
+    name: empresa.venture.nombre,
+    url: empresa.venture.url,
+  },
+  ...(empresa.razonSocial ? { legalName: empresa.razonSocial } : {}),
+  ...(empresa.rut ? { taxID: empresa.rut } : {}),
+  ...(empresa.contacto ? { email: empresa.contacto } : {}),
+  ...(empresa.domicilio
+    ? { address: { '@type': 'PostalAddress', streetAddress: empresa.domicilio, addressCountry: 'CL' } }
+    : {}),
+};
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    organizacion,
+    {
+      '@type': 'WebSite',
+      '@id': abs('/#website'),
+      url: canonical,
+      name: empresa.nombre,
+      inLanguage: 'es-CL',
+      publisher: { '@id': abs('/#organization') },
+    },
+    {
+      '@type': 'SoftwareApplication',
+      name: empresa.nombre,
+      url: empresa.app,
+      applicationCategory: 'BusinessApplication',
+      operatingSystem: 'Web',
+      inLanguage: 'es-CL',
+      publisher: { '@id': abs('/#organization') },
+      description: seo.description,
+    },
+  ],
+};
+---
+
+<!doctype html>
+<html lang="es-CL">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{seo.title}</title>
+    <meta name="description" content={seo.description} />
+    {!INDEXABLE && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#0A1826" />
+
+    <link rel="preload" as="font" type="font/woff2" crossorigin href={frauncesUrl} />
+    <link rel="preload" as="font" type="font/woff2" crossorigin href={interUrl} />
+    <style is:inline set:html={fontFaces} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={empresa.nombre} />
+    <meta property="og:locale" content="es_CL" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={seo.title} />
+    <meta property="og:description" content={seo.description} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={seo.ogAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={seo.title} />
+    <meta name="twitter:description" content={seo.description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)} />
+
+    <script is:inline>
+      // Antes del primer paint: habilita el estado inicial oculto de .reveal.
+      // Sin JavaScript la clase nunca se agrega y todo el contenido queda visible.
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+  <body>
+    <a
+      href="#contenido"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-full focus:bg-brass focus:px-5 focus:py-3 focus:text-sm focus:font-semibold focus:text-ink"
+    >
+      {nav.saltarAlContenido}
+    </a>
+    <slot />
+
+    <script>
+      // Apariciones por mejora progresiva. Lo que ya está sobre el pliegue se
+      // muestra al instante: no puede depender de un callback que quizá no llegue.
+      const targets = document.querySelectorAll<HTMLElement>('.reveal');
+      const mostrar = (el: Element) => el.setAttribute('data-revealed', '');
+
+      if (!('IntersectionObserver' in window)) {
+        targets.forEach(mostrar);
+      } else {
+        const observer = new IntersectionObserver(
+          (entries) => {
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              mostrar(entry.target);
+              observer.unobserve(entry.target);
+            }
+          },
+          { rootMargin: '0px 0px -12% 0px' },
+        );
+
+        for (const el of targets) {
+          if (el.getBoundingClientRect().top < window.innerHeight) mostrar(el);
+          else observer.observe(el);
+        }
+      }
+
+      // Halo que sigue al cursor, a un frame por evento.
+      for (const card of document.querySelectorAll<HTMLElement>('.spotlight')) {
+        let frame = 0;
+        card.addEventListener(
+          'pointermove',
+          (event) => {
+            if (frame) return;
+            const { clientX, clientY } = event;
+            frame = requestAnimationFrame(() => {
+              frame = 0;
+              const rect = card.getBoundingClientRect();
+              card.style.setProperty('--mx', `${clientX - rect.left}px`);
+              card.style.setProperty('--my', `${clientY - rect.top}px`);
+            });
+          },
+          { passive: true },
+        );
+      }
+    </script>
+  </body>
+</html>

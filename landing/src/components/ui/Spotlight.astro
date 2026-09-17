@@ -1,0 +1,11 @@
+---
+/** Tarjeta con halo que sigue al cursor. El listener vive en Base.astro. */
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<div class:list={['spotlight relative', className]}>
+  <div class="relative z-1 h-full"><slot /></div>
+</div>

@@ -1,0 +1,80 @@
+---
+import { causa } from '../../content/landing';
+import Section from '../ui/Section.astro';
+import Reveal from '../ui/Reveal.astro';
+import MovementHeader from '../ui/MovementHeader.astro';
+import Autonomia from '../ui/Autonomia.astro';
+import ArtefactoTabs from './ArtefactoTabs.astro';
+
+interface Props {
+  folio: string;
+}
+const { folio } = Astro.props;
+---
+
+<Section id="causa" folio={folio} labelledby="causa-titulo">
+  <MovementHeader
+    id="causa-titulo"
+    eyebrow={causa.eyebrow}
+    title={causa.title}
+    titleTail={causa.titleTail}
+    lead={causa.lead}
+  />
+
+  <div class="mt-16 grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:gap-16">
+    {/* La secuencia legal del juicio ejecutivo, hito por hito. */}
+    <ol class="relative">
+      <span
+        aria-hidden="true"
+        class="absolute top-2 bottom-2 left-[0.9375rem] w-px bg-gradient-to-b from-brass-hi/40 via-line-hi to-transparent"
+      ></span>
+      {
+        causa.hitos.map((hito, i) => (
+          <Reveal as="li" delay={Math.min(i, 5) * 60} class="relative block">
+            <div class="flex gap-5 pb-9">
+              <span
+                aria-hidden="true"
+                class="relative z-1 mt-0.5 grid h-8 w-8 shrink-0 place-items-center rounded-full border border-line-hi bg-ink font-mono text-[0.6875rem] text-brass-hi tabular-nums"
+              >
+                {hito.folio}
+              </span>
+              <div class="min-w-0 flex-1">
+                <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+                  <p class="font-mono text-[0.625rem] tracking-[0.14em] text-muted uppercase">{hito.etapa}</p>
+                  <Autonomia valor={hito.autonomia} />
+                </div>
+                <h3 class="mt-2 text-[1.0625rem] font-semibold text-cream">{hito.titulo}</h3>
+                <p class="mt-2 max-w-xl text-[0.9375rem] text-muted">{hito.detalle}</p>
+              </div>
+            </div>
+          </Reveal>
+        ))
+      }
+    </ol>
+
+    <div class="lg:sticky lg:top-32 lg:self-start">
+      <Reveal>
+        <p class="font-mono text-[0.6875rem] tracking-[0.18em] text-brass uppercase">{causa.artefactos.titulo}</p>
+      </Reveal>
+      <Reveal delay={60} class="mt-5">
+        <ArtefactoTabs />
+      </Reveal>
+      <Reveal delay={120}>
+        <div class="mt-8 rounded-2xl border border-line bg-ink-2/60 p-6">
+          <p class="text-sm font-semibold text-cream">{causa.resumen.titulo}</p>
+          <ul class="mt-4 flex flex-col gap-2.5">
+            {
+              causa.resumen.items.map((item) => (
+                <li class="flex gap-3 text-sm text-muted">
+                  <span aria-hidden="true" class="mt-[0.4375rem] h-1 w-1 shrink-0 rounded-full bg-brass-hi" />
+                  {item}
+                </li>
+              ))
+            }
+          </ul>
+          <p class="mt-5 border-t border-line pt-4 font-mono text-[0.6875rem] text-brass-hi">{causa.resumen.nota}</p>
+        </div>
+      </Reveal>
+    </div>
+  </div>
+</Section>

@@ -1,0 +1,26 @@
+---
+/**
+ * Hoja de papel — el elemento firma de la landing. Cada documento real
+ * (resolución, escrito, estampado, correo) se muestra como papel marfil sobre
+ * el navy. El cuerpo usa --font-doc, el tipo real de los escritos.
+ */
+interface Props {
+  /** Rótulo del documento, en el borde superior de la hoja. */
+  label: string;
+  /** Foliación del documento dentro del expediente. */
+  folio?: string;
+  class?: string;
+}
+
+const { label, folio, class: className } = Astro.props;
+---
+
+<article class:list={['sheet overflow-hidden', className]}>
+  <div class="flex items-center justify-between gap-4 border-b border-paper-edge px-5 py-2.5 sm:px-7">
+    <span class="font-mono text-[0.625rem] tracking-[0.16em] text-ink-on-paper/60 uppercase">{label}</span>
+    {folio && <span class="font-mono text-[0.625rem] text-ink-on-paper/45 tabular-nums">f. {folio}</span>}
+  </div>
+  <div class="px-5 py-6 font-[family-name:var(--font-doc)] text-[0.9375rem] leading-[1.75] sm:px-10 sm:py-8">
+    <slot />
+  </div>
+</article>

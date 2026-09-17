@@ -1,0 +1,236 @@
+---
+/**
+ * El ciclo del procurador: llega una resolución, el agente la lee y sale un
+ * borrador que la persona corrige o firma. Los dos casos están en el HTML;
+ * el inactivo queda con `hidden`. El ciclo solo cambia `data-tiempo`, y el
+ * realce lo resuelve el CSS. Las hojas nunca se atenúan: el papel apagado
+ * sobre navy se lee como un rectángulo sucio.
+ */
+import ArrowRight from '@lucide/astro/icons/arrow-right';
+import Check from '@lucide/astro/icons/check';
+import PenLine from '@lucide/astro/icons/pen-line';
+import { procurador } from '../../content/landing';
+import Section from '../ui/Section.astro';
+import Reveal from '../ui/Reveal.astro';
+import Sheet from '../ui/Sheet.astro';
+import MovementHeader from '../ui/MovementHeader.astro';
+
+interface Props {
+  folio: string;
+}
+const { folio } = Astro.props;
+
+const tiempoClase = (n: 1 | 2 | 3) =>
+  ({
+    1: 'group-data-[tiempo=1]/proc:text-brass-hi group-data-[tiempo=1]/proc:border-brass-hi/60',
+    2: 'group-data-[tiempo=2]/proc:text-brass-hi group-data-[tiempo=2]/proc:border-brass-hi/60',
+    3: 'group-data-[tiempo=3]/proc:text-brass-hi group-data-[tiempo=3]/proc:border-brass-hi/60',
+  })[n];
+---
+
+<Section id="procurador" folio={folio} rhythm="statement" labelledby="procurador-titulo">
+  <MovementHeader
+    id="procurador-titulo"
+    eyebrow={procurador.eyebrow}
+    title={procurador.title}
+    titleTail={procurador.titleTail}
+    lead={procurador.lead}
+  />
+
+  <div class="group/proc" data-tiempo="3" data-procurador>
+    <Reveal delay={60}>
+      <div role="tablist" aria-label="Casos del procurador" class="mt-10 flex flex-wrap gap-2">
+        {
+          procurador.casos.map((c, i) => (
+            <button
+              type="button"
+              role="tab"
+              id={`proc-tab-${c.id}`}
+              aria-selected={i === 0 ? 'true' : 'false'}
+              aria-controls={`proc-panel-${c.id}`}
+              tabindex={i === 0 ? 0 : -1}
+              data-caso={c.id}
+              class="inline-flex min-h-11 cursor-pointer items-center rounded-full border border-line px-5 text-sm text-muted transition-colors duration-200 hover:border-line-hi hover:text-cream aria-selected:border-brass-hi/60 aria-selected:bg-surface/70 aria-selected:text-cream"
+            >
+              {c.label}
+            </button>
+          ))
+        }
+      </div>
+    </Reveal>
+
+    {
+      procurador.casos.map((caso, i) => (
+        <div
+          role="tabpanel"
+          id={`proc-panel-${caso.id}`}
+          aria-labelledby={`proc-tab-${caso.id}`}
+          hidden={i !== 0}
+          class="mt-8"
+        >
+          <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:items-start lg:gap-5">
+            <div>
+              <p class="flex items-center gap-2 font-mono text-[0.6875rem] tracking-[0.16em] text-muted uppercase transition-colors duration-300 group-data-[tiempo=1]/proc:text-brass-hi">
+                <span class:list={['grid h-5 w-5 place-items-center rounded-full border border-line-hi text-[0.625rem] tabular-nums transition-colors duration-300', tiempoClase(1)]}>1</span>
+                {procurador.tiempos[0]}
+              </p>
+              <Sheet
+                label={caso.entrada.label}
+                folio={caso.entrada.folio}
+                class="mt-4 rotate-[-0.5deg] transition-shadow duration-500 group-data-[tiempo=1]/proc:ring-2 group-data-[tiempo=1]/proc:ring-brass-hi/45"
+              >
+                <p class="font-semibold uppercase">{caso.entrada.titulo}</p>
+                {caso.entrada.lineas.map((linea) => <p class="mt-4 text-justify">{linea}</p>)}
+              </Sheet>
+            </div>
+
+            <div aria-hidden="true" class="hidden self-center lg:block lg:pt-16">
+              <ArrowRight size={20} class="text-muted transition-colors duration-500 group-data-[tiempo=3]/proc:text-brass-hi" />
+            </div>
+
+            <div>
+              <p class="flex items-center gap-2 font-mono text-[0.6875rem] tracking-[0.16em] text-muted uppercase transition-colors duration-300 group-data-[tiempo=3]/proc:text-brass-hi">
+                <span class:list={['grid h-5 w-5 place-items-center rounded-full border border-line-hi text-[0.625rem] tabular-nums transition-colors duration-300', tiempoClase(3)]}>3</span>
+                {procurador.tiempos[2]}
+              </p>
+              <Sheet
+                label={caso.salida.label}
+                folio={caso.salida.folio}
+                class="mt-4 rotate-[0.4deg] transition-shadow duration-500 group-data-[tiempo=3]/proc:ring-2 group-data-[tiempo=3]/proc:ring-brass-hi/45"
+              >
+                <p class="font-semibold uppercase">{caso.salida.encabezado}</p>
+                {caso.salida.lineas.map((linea) => <p class="mt-4 text-justify">{linea}</p>)}
+                <p class="mt-6 text-[0.8125rem] text-ink-on-paper/70 italic">{caso.salida.pie}</p>
+              </Sheet>
+            </div>
+          </div>
+
+          <div class="mt-6 rounded-2xl border border-line bg-ink-2/60 p-6 transition-colors duration-500 group-data-[tiempo=2]/proc:border-brass-hi/30 group-data-[tiempo=2]/proc:bg-surface/30 sm:p-7">
+            <p class="flex items-center gap-2 font-mono text-[0.6875rem] tracking-[0.16em] text-muted uppercase transition-colors duration-300 group-data-[tiempo=2]/proc:text-brass-hi">
+              <span class:list={['grid h-5 w-5 place-items-center rounded-full border border-line-hi text-[0.625rem] tabular-nums transition-colors duration-300', tiempoClase(2)]}>2</span>
+              {procurador.tiempos[1]}
+            </p>
+
+            {/* El título del PJUD falla cerca del 70% de las veces: verlo junto al contenido real es el punto. */}
+            <div class="mt-5 grid gap-3 sm:grid-cols-2">
+              <div class="rounded-xl border border-line bg-ink/40 p-4">
+                <p class="text-[0.625rem] tracking-wide text-muted uppercase">{caso.lectura.titulo}</p>
+                <p class:list={['mt-1.5 font-mono text-sm text-muted', caso.lectura.tachaPrimero && 'line-through']}>
+                  {caso.lectura.tituloValor}
+                </p>
+              </div>
+              <div class="rounded-xl border border-brass-hi/30 bg-surface/40 p-4">
+                <p class="text-[0.625rem] tracking-wide text-brass-hi uppercase">{caso.lectura.contenido}</p>
+                <p class="mt-1.5 text-sm text-cream">{caso.lectura.contenidoValor}</p>
+              </div>
+            </div>
+
+            <dl class="mt-6 grid gap-x-8 gap-y-4 sm:grid-cols-2">
+              {
+                caso.lectura.filas.map((f) => (
+                  <div>
+                    <dt class="font-mono text-[0.6875rem] tracking-wide text-muted uppercase">{f.campo}</dt>
+                    <dd class="mt-1.5 text-[0.9375rem] text-cream">{f.valor}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+
+            <p class="mt-6 border-t border-line pt-5 text-[0.875rem] text-muted">{caso.lectura.alterno}</p>
+          </div>
+        </div>
+      ))
+    }
+
+    <Reveal delay={120}>
+      <div class="mt-6 flex flex-col gap-5 rounded-2xl border border-brass-hi/25 bg-ink-2/60 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-7">
+        <div>
+          <p class="font-mono text-[0.6875rem] tracking-[0.16em] text-brass-hi uppercase">{procurador.barra.estado}</p>
+          <p class="mt-2 text-[0.9375rem] text-muted">{procurador.barra.nota}</p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <span class="inline-flex min-h-11 items-center gap-2 rounded-full border border-line-hi px-5 text-sm text-cream">
+            <PenLine size={14} aria-hidden="true" />
+            {procurador.barra.corregir}
+          </span>
+          <span class="inline-flex min-h-11 items-center gap-2 rounded-full bg-brass px-5 text-sm font-semibold text-ink">
+            <Check size={14} aria-hidden="true" />
+            {procurador.barra.aprobar}
+          </span>
+        </div>
+      </div>
+    </Reveal>
+  </div>
+
+  <Reveal delay={180}>
+    <p class="mt-12 max-w-3xl font-display text-[clamp(1.25rem,1rem+1.2vw,1.8rem)] leading-snug text-cream">
+      {procurador.remate}
+    </p>
+  </Reveal>
+</Section>
+
+<script>
+  const raiz = document.querySelector<HTMLElement>('[data-procurador]');
+
+  if (raiz) {
+    const tabs = [...raiz.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let tiempo = 3;
+    let timer: number | undefined;
+
+    const pintar = () => (raiz.dataset.tiempo = String(tiempo));
+
+    const iniciar = () => {
+      if (reduce || timer) return;
+      tiempo = 1;
+      pintar();
+      timer = window.setInterval(() => {
+        tiempo = tiempo >= 3 ? 1 : tiempo + 1;
+        pintar();
+      }, 1800);
+    };
+
+    const detener = () => {
+      window.clearInterval(timer);
+      timer = undefined;
+    };
+
+    const seleccionar = (tab: HTMLButtonElement, foco = false) => {
+      for (const t of tabs) {
+        const activo = t === tab;
+        t.setAttribute('aria-selected', String(activo));
+        t.tabIndex = activo ? 0 : -1;
+        const panel = document.getElementById(t.getAttribute('aria-controls') ?? '');
+        if (panel) panel.hidden = !activo;
+      }
+      if (foco) tab.focus();
+      // Al cambiar de caso, el ciclo parte desde el primer tiempo.
+      detener();
+      iniciar();
+    };
+
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => seleccionar(tab));
+      tab.addEventListener('keydown', (event) => {
+        const delta = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
+        if (!delta) return;
+        event.preventDefault();
+        seleccionar(tabs[(i + delta + tabs.length) % tabs.length], true);
+      });
+    });
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(
+        (entries) => {
+          if (entries[0]?.isIntersecting) iniciar();
+          else {
+            detener();
+            tiempo = 3;
+            pintar();
+          }
+        },
+        { threshold: 0.2 },
+      ).observe(raiz);
+    }
+  }
+</script>

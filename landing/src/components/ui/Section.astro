@@ -1,0 +1,41 @@
+---
+import Folio from './Folio.astro';
+import { cn } from '../../lib/cn';
+
+type Rhythm = 'statement' | 'evidence';
+
+interface Props {
+  id: string;
+  /** Número de folio del movimiento. Se omite en el hero y el pie. */
+  folio?: string;
+  rhythm?: Rhythm;
+  class?: string;
+  labelledby?: string;
+}
+
+const rhythm: Record<Rhythm, string> = {
+  statement: 'py-24 md:py-36',
+  evidence: 'py-16 md:py-24',
+};
+
+const { id, folio, rhythm: r = 'evidence', class: className, labelledby } = Astro.props;
+---
+
+{/* cn() y no class:list: el hero sobrescribe el padding del ritmo y el conflicto debe resolverse. */}
+<section id={id} aria-labelledby={labelledby} class={cn('relative', rhythm[r], className)}>
+  <slot name="fondo" />
+  <div class="relative mx-auto w-full max-w-[76rem] px-6 sm:px-8 lg:px-10">
+    {
+      folio ? (
+        <div class="lg:grid lg:grid-cols-[4rem_minmax(0,1fr)] lg:gap-8">
+          <Folio value={folio} />
+          <div class="min-w-0">
+            <slot />
+          </div>
+        </div>
+      ) : (
+        <slot />
+      )
+    }
+  </div>
+</section>

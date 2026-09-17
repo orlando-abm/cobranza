@@ -1,0 +1,95 @@
+---
+/**
+ * Fundadores y equipo, con enlaces públicos verificables. Nunca se muestra un
+ * marcador: sin LinkedIn, el enlace simplemente no aparece, y el chequeo de
+ * publicación impide salir a producción así.
+ */
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import ArrowUpRight from '@lucide/astro/icons/arrow-up-right';
+import { empresa, equipo } from '../../content/landing';
+import Section from '../ui/Section.astro';
+import Reveal from '../ui/Reveal.astro';
+import MovementHeader from '../ui/MovementHeader.astro';
+
+interface Props {
+  folio: string;
+}
+const { folio } = Astro.props;
+
+const fotos = import.meta.glob<{ default: ImageMetadata }>('../../assets/equipo/*.{png,jpg,jpeg,webp}', {
+  eager: true,
+});
+
+const miembros = equipo.miembros.map((m) => ({
+  ...m,
+  imagen: m.foto ? fotos[`../../assets/equipo/${m.foto}`]?.default : undefined,
+}));
+---
+
+<Section id="equipo" folio={folio} labelledby="equipo-titulo">
+  <MovementHeader
+    id="equipo-titulo"
+    eyebrow={equipo.eyebrow}
+    title={equipo.title}
+    titleTail={equipo.titleTail}
+    lead={equipo.lead}
+  />
+
+  <ul role="list" class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {
+      miembros.map((m, i) => (
+        <Reveal as="li" delay={i * 60}>
+          <article class="flex h-full flex-col gap-5 rounded-2xl border border-line bg-ink-2/60 p-6" data-miembro>
+            {m.imagen ? (
+              <Image
+                src={m.imagen}
+                alt={`Retrato de ${m.nombre}`}
+                width={128}
+                height={128}
+                class="h-16 w-16 rounded-full border border-line-hi object-cover"
+              />
+            ) : (
+              <span
+                aria-hidden="true"
+                class="grid h-16 w-16 place-items-center rounded-full border border-line-hi bg-surface/50 font-mono text-base tracking-wide text-brass-hi"
+              >
+                {m.iniciales}
+              </span>
+            )}
+            <div>
+              <h3 class="text-base font-semibold text-cream">{m.nombre}</h3>
+              <p class="mt-1 font-mono text-[0.6875rem] tracking-[0.12em] text-brass-hi uppercase">{m.cargo}</p>
+            </div>
+            <p class="text-sm text-muted">{m.linea}</p>
+            {m.linkedin && (
+              <a
+                href={m.linkedin}
+                rel="me noopener"
+                target="_blank"
+                data-linkedin
+                class="mt-auto inline-flex min-h-11 items-center gap-1.5 self-start text-sm text-cream underline decoration-line-hi underline-offset-4 transition-colors duration-200 hover:text-brass-hi hover:decoration-brass-hi"
+              >
+                {equipo.perfil}
+                <span class="sr-only"> de {m.nombre} (se abre en una pestaña nueva)</span>
+                <ArrowUpRight size={14} aria-hidden="true" />
+              </a>
+            )}
+          </article>
+        </Reveal>
+      ))
+    }
+  </ul>
+
+  <Reveal delay={120}>
+    <p class="mt-8 text-sm text-muted">
+      {empresa.nombre} es una empresa de
+      <a
+        href={empresa.venture.url}
+        rel="noopener"
+        target="_blank"
+        class="text-cream underline decoration-line-hi underline-offset-4 hover:text-brass-hi hover:decoration-brass-hi"
+      >{empresa.venture.nombre}<span class="sr-only"> (se abre en una pestaña nueva)</span></a>.
+    </p>
+  </Reveal>
+</Section>

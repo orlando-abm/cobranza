@@ -1,0 +1,77 @@
+---
+/**
+ * Los documentos del hito en pestañas. Los tres paneles están en el HTML; el
+ * inactivo queda con `hidden`, así que sin JavaScript el primero sigue legible.
+ */
+import { causa } from '../../content/landing';
+import Sheet from '../ui/Sheet.astro';
+---
+
+<div data-artefactos>
+  <div role="tablist" aria-label={causa.artefactos.titulo} class="flex flex-wrap gap-2">
+    {
+      causa.artefactos.tabs.map((tab, i) => (
+        <button
+          type="button"
+          role="tab"
+          id={`art-tab-${tab.id}`}
+          aria-selected={i === 0 ? 'true' : 'false'}
+          aria-controls={`art-panel-${tab.id}`}
+          tabindex={i === 0 ? 0 : -1}
+          class="inline-flex min-h-11 cursor-pointer items-center rounded-full border border-line px-4 text-sm text-muted transition-colors duration-200 hover:border-line-hi hover:text-cream aria-selected:border-brass-hi/60 aria-selected:bg-surface/70 aria-selected:text-cream"
+        >
+          {tab.label}
+        </button>
+      ))
+    }
+  </div>
+
+  <div class="mt-6">
+    {
+      causa.artefactos.tabs.map((tab, i) => (
+        <div role="tabpanel" id={`art-panel-${tab.id}`} aria-labelledby={`art-tab-${tab.id}`} hidden={i !== 0}>
+          <Sheet label={tab.sheetLabel} folio={tab.folio}>
+            {tab.lineas.map((linea, j) => (
+              <p
+                class:list={[
+                  j > 0 && 'mt-4',
+                  // La última línea de cada artefacto es la lectura del agente.
+                  j === tab.lineas.length - 1 &&
+                    'border-t border-paper-edge pt-4 text-[0.8125rem] text-ink-on-paper/75 italic',
+                ]}
+              >
+                {linea}
+              </p>
+            ))}
+          </Sheet>
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<script>
+  const raiz = document.querySelector<HTMLElement>('[data-artefactos]');
+  if (raiz) {
+    const tabs = [...raiz.querySelectorAll<HTMLButtonElement>('[role="tab"]')];
+    const seleccionar = (tab: HTMLButtonElement, foco = false) => {
+      for (const t of tabs) {
+        const activo = t === tab;
+        t.setAttribute('aria-selected', String(activo));
+        t.tabIndex = activo ? 0 : -1;
+        const panel = document.getElementById(t.getAttribute('aria-controls') ?? '');
+        if (panel) panel.hidden = !activo;
+      }
+      if (foco) tab.focus();
+    };
+    tabs.forEach((tab, i) => {
+      tab.addEventListener('click', () => seleccionar(tab));
+      tab.addEventListener('keydown', (event) => {
+        const delta = event.key === 'ArrowRight' ? 1 : event.key === 'ArrowLeft' ? -1 : 0;
+        if (!delta) return;
+        event.preventDefault();
+        seleccionar(tabs[(i + delta + tabs.length) % tabs.length], true);
+      });
+    });
+  }
+</script>

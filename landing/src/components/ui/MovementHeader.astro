@@ -1,0 +1,33 @@
+---
+import Reveal from './Reveal.astro';
+
+interface Props {
+  id: string;
+  eyebrow: string;
+  title: string;
+  /** Se resalta en latón el remate de la frase. */
+  titleTail?: string;
+  lead?: string;
+}
+
+const { id, eyebrow, title, titleTail, lead } = Astro.props;
+---
+
+<header>
+  <Reveal>
+    <p class="font-mono text-[0.6875rem] tracking-[0.18em] text-brass uppercase">{eyebrow}</p>
+  </Reveal>
+  <Reveal delay={60}>
+    <h2 id={id} class="mt-4 font-display text-title font-semibold">
+      {title}
+      {titleTail && <span class="text-gradient-brass"> {titleTail}</span>}
+    </h2>
+  </Reveal>
+  {
+    lead && (
+      <Reveal delay={120}>
+        <p class="mt-5 max-w-2xl text-lead text-muted">{lead}</p>
+      </Reveal>
+    )
+  }
+</header>

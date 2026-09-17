@@ -1,0 +1,20 @@
+---
+/**
+ * Número de folio del movimiento. Numerar se justifica porque el juicio
+ * ejecutivo es una secuencia con orden legal obligatorio; se rotula "folio"
+ * porque es la palabra del oficio. En lg+ acompaña el scroll desde el margen.
+ */
+interface Props {
+  value: string;
+}
+
+const { value } = Astro.props;
+---
+
+<div class="mb-6 lg:sticky lg:top-32 lg:mb-0 lg:self-start" aria-hidden="true">
+  <div class="flex items-center gap-3 lg:flex-col lg:items-start lg:gap-2">
+    <span class="font-mono text-[0.6875rem] tracking-[0.18em] text-muted/70 uppercase">Folio</span>
+    <span class="font-mono text-lg text-brass-hi tabular-nums lg:text-2xl">{value}</span>
+    <span class="h-px w-8 bg-line-hi lg:mt-1 lg:w-6"></span>
+  </div>
+</div>
