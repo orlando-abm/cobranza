@@ -34,7 +34,7 @@ export const empresa: Empresa = {
   domicilio: null,
   contacto: 'coyandelp@kupera.cl',
   app: 'https://app.kupera.cl',
-  venture: { nombre: 'ProdBooster Venture Studio', url: 'https://www.prodbooster.com' },
+  venture: { nombre: 'ProdBooster Studio', url: 'https://www.prodbooster.com' },
 };
 
 export const seo = {
@@ -64,9 +64,9 @@ export const hero = {
   title: 'El trámite lo ejecuta el agente.',
   titleTail: 'El criterio sigue siendo tuyo.',
   lead:
-    'Kupera lee lo que llega —el lote de la financiera y cada resolución del tribunal—, arma el ' +
-    'escrito que corresponde y te lo deja listo. Tú corriges, firmas y decides. La oposición de ' +
-    'excepciones no la toca nadie más que tú.',
+    'Kupera lee lo que llega —el lote de la financiera y cada resolución del tribunal—, redacta el ' +
+    'escrito completo y te lo deja listo para revisar. Tú apruebas, corriges o descartas. Nada se ' +
+    'presenta sin tu firma.',
   ctaPrimario: 'Agenda una demo',
   ctaSecundario: 'Ingresar a la plataforma',
   nota: 'Sin integración al PJUD sin tu consentimiento firmado. Ley 21.719.',
@@ -98,8 +98,8 @@ export const procurador = {
   tiempos: ['Llega', 'El agente lee', 'Sale'],
   barra: barraHumana,
   remate:
-    'El agente nunca presenta solo. Prepara, explica en qué se basó y espera. Si el criterio se ' +
-    'sale de la pauta, no redacta: alerta.',
+    'El agente redacta de principio a fin y explica en qué se basó. Tu trabajo deja de ser escribir ' +
+    'desde cero y pasa a ser aprobar, corregir o descartar. Nada se presenta sin tu firma.',
   casos: [
     {
       id: 'previo',
@@ -129,7 +129,7 @@ export const procurador = {
           { campo: 'Veredicto', valor: 'El ajuste cabe en la pauta. Se pre-redacta el escrito.' },
         ],
         alterno:
-          'Si el ajuste excediera la pauta, el agente no redacta: alerta para evaluar reposición, con su plazo de cinco días.',
+          'Si el ajuste excediera la pauta, el agente redacta igual y te lo advierte, para que decidas entre cumplir o ir a reposición.',
       },
       salida: {
         label: 'Cumple lo ordenado · borrador',
@@ -420,50 +420,53 @@ export const flujo = {
 
 export const autonomia = {
   eyebrow: 'Matriz de autonomía',
-  title: 'Qué hace solo,',
-  titleTail: 'qué te pregunta, qué no toca.',
+  title: 'El agente hace el trabajo.',
+  titleTail: 'Tú apruebas.',
   lead:
-    'La autonomía está declarada ticket por ticket. Nada se ejecuta en un nivel que no le ' +
-    'corresponde.',
+    'No hay escritos que queden a medias ni trámites que vuelvan a tu escritorio en blanco. El ' +
+    'agente redacta todo lo que la causa necesita, incluida la defensa, y lo deja listo para tu ' +
+    'revisión. Lo único que nunca hace es presentar sin tu aprobación.',
   columnas: [
     {
-      nivel: 'AUTOMÁTICO',
-      resumen: 'El agente lo ejecuta y deja trazado.',
+      nivel: 'EJECUTA SOLO',
+      resumen: 'Lo hace y deja registro de cada paso.',
       items: [
         'Descomprimir el lote y clasificar los documentos',
         'Validar completitud y consistencia cruzada por OCR',
         'Leer el contenido de las actuaciones del PJUD',
-        'Controlar los relojes de cada plazo',
+        'Comparar el mandamiento campo a campo contra la demanda',
         'Consultar la inscripción en el Registro Civil',
       ],
     },
     {
-      nivel: 'CON APROBACIÓN',
-      resumen: 'El agente prepara, tú autorizas.',
+      nivel: 'REDACTA POR TI',
+      resumen: 'Arma el escrito completo y te explica en qué se basó.',
       items: [
-        'Redacción de la demanda y revisión en lote',
-        'Subida al PJUD y flujo multifirma',
-        'Elección y confirmación del receptor',
-        'Escritos pre-redactados: cumple lo ordenado, rectifíquese, certificado',
+        'La demanda ejecutiva con la plantilla de la jurisdicción',
+        'Cumple lo ordenado y rectifíquese el mandamiento',
+        'Certificado de no haberse opuesto excepciones',
+        'Encargos al receptor, nuevo domicilio, exhortos y oficios',
+        'La respuesta a excepciones y traslados, con la defensa propuesta',
         'Designación de martillero y retiro',
       ],
     },
     {
-      nivel: 'SOLO HUMANO',
-      resumen: 'El agente alerta y se detiene.',
+      nivel: 'NUNCA SIN TI',
+      resumen: 'Se detiene y espera tu decisión.',
       items: [
-        'Oposición de excepciones',
-        'Respuesta a traslados',
-        'Vehículo transferido a un tercero',
-        'Rechazo de inscripción en el Registro Civil',
-        'Reposición y apelación',
+        'Presentar cualquier escrito en el PJUD',
+        'Firmar: la firma es del abogado, siempre',
+        'Aceptar o cambiar la defensa que propuso el agente',
+        'Resolver un vehículo transferido a un tercero',
+        'Decidir ante un rechazo de inscripción en el Registro Civil',
       ],
     },
   ],
-  lineaRoja: 'El agente jamás contesta excepciones ni traslados.',
+  lineaRoja: 'El agente redacta todo. Nunca presenta nada sin tu aprobación.',
   lineaRojaDetalle:
-    'Cuando aparece una oposición, el agente sube la alerta al máximo, clasifica la causa y para. ' +
-    'La defensa la escribe el abogado.',
+    'Cuando el deudor opone excepciones, el agente lee el escrito, propone la defensa y deja el ' +
+    'borrador armado. Tú decides si esa es la respuesta, la corriges o la descartas. El criterio ' +
+    'jurídico y la firma siguen siendo tuyos; lo que desaparece es la hoja en blanco.',
 } as const;
 
 /**
@@ -548,22 +551,17 @@ export const faq = {
     {
       pregunta: '¿Qué es Kupera?',
       respuesta:
-        'Kupera es un agente de cobranza judicial automotriz por pagaré para estudios jurídicos en Chile. Lee el lote que asigna la financiera, valida los documentos, redacta la demanda, interpreta las resoluciones del tribunal y controla los plazos del juicio ejecutivo. El abogado revisa, corrige y firma.',
+        'Kupera es un agente de cobranza judicial automotriz por pagaré para estudios jurídicos en Chile. Lee el lote que asigna la financiera, valida los documentos, interpreta cada resolución del tribunal y redacta de principio a fin el escrito que corresponde. El abogado aprueba, corrige o descarta, y firma.',
     },
     {
-      pregunta: '¿El agente puede contestar excepciones o traslados?',
+      pregunta: '¿Qué pasa si el deudor opone excepciones?',
       respuesta:
-        'No. El agente jamás contesta excepciones ni traslados. Cuando aparece una oposición sube la alerta al máximo, clasifica la causa y se detiene. La defensa la escribe el abogado.',
+        'El agente lee el escrito de excepciones, propone la defensa y deja el borrador de respuesta armado, con el plazo en cuenta regresiva. Tú decides si esa es la defensa, la corriges o la descartas. Nunca se presenta sin tu aprobación: el criterio jurídico y la firma siguen siendo del abogado.',
     },
     {
       pregunta: '¿Qué hace solo y qué necesita aprobación?',
       respuesta:
-        'Ejecuta solo lo que no tiene criterio jurídico: descomprimir el lote, validar los cuatro documentos mandatorios, leer el contenido de las actuaciones del PJUD, controlar los relojes de plazo y consultar la inscripción en el Registro Civil. Requiere aprobación para redactar la demanda, subirla al PJUD, elegir receptor y firmar cualquier escrito.',
-    },
-    {
-      pregunta: '¿Qué plazos del juicio ejecutivo controla?',
-      respuesta:
-        'Ocho días para oponer excepciones contados desde el requerimiento de pago, cuatro días para el traslado, cinco para la reposición y alrededor de treinta días para la inscripción del embargo en el Registro Civil. Cada plazo perentorio abre un temporizador diario.',
+        'Ejecuta solo lo que no tiene criterio jurídico: descomprimir el lote, validar los cuatro documentos mandatorios, leer el contenido de las actuaciones del PJUD y consultar la inscripción en el Registro Civil. Redacta por ti todos los escritos, incluida la respuesta a la defensa del deudor. Y nunca presenta nada en el PJUD sin tu aprobación.',
     },
     {
       pregunta: '¿Qué documentos necesita para preparar una demanda?',
@@ -583,7 +581,7 @@ export const faq = {
     {
       pregunta: '¿Kupera reemplaza al estudio jurídico?',
       respuesta:
-        'No. Kupera automatiza el trabajo hormiga del trámite para que el estudio lleve más causas sin perder control. El criterio legal, la firma y la relación con la financiera siguen siendo del estudio.',
+        'No. Kupera redacta el trámite para que el estudio lleve más causas sin perder control, pero no decide por él. El criterio legal, la firma y la relación con la financiera siguen siendo del estudio.',
     },
   ],
 } as const;

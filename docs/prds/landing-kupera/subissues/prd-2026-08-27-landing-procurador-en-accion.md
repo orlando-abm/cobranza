@@ -32,7 +32,7 @@ La primera versión de la landing explicaba bien la creación de la demanda, per
 - Automatizar decisiones reservadas al abogado, a la financiera o al receptor cuando la matriz de autonomía exige revisión.
 - Cambiar reglas legales del juicio ejecutivo de cobranza automotriz por pagaré.
 - Definir arquitectura técnica, proveedor OCR, modelo de datos físico o integración específica fuera del alcance funcional del PRD.
-- Mostrar escritos de respuesta a excepciones o traslados, que son línea roja del agente.
+- Desarrollar el caso de excepciones y traslados en esta sección; se aborda en la matriz de autonomía y en las preguntas frecuentes.
 - Usar resoluciones reales, roles reales o datos personales de deudores.
 
 ## 4. User Stories
@@ -51,7 +51,7 @@ La primera versión de la landing explicaba bien la creación de la demanda, per
 - **RF-01:** El sistema debe presentar tres tiempos: la resolución que llega, la lectura del agente y el borrador que sale.
 - **RF-02:** La lectura debe contraponer el título de la actuación con el contenido real del documento, porque el título del PJUD viene mal etiquetado con frecuencia.
 - **RF-03:** La lectura debe declarar qué pide el tribunal, qué plazo corre, qué dice la pauta de la financiera y el veredicto del agente.
-- **RF-04:** El caso «previo a proveer» debe respetar la pauta de rebaja de hasta 10% con tope de CLP 500.000, y declarar que fuera de pauta el agente alerta para evaluar reposición en vez de redactar.
+- **RF-04:** El caso «previo a proveer» debe respetar la pauta de rebaja de hasta 10% con tope de CLP 500.000, y declarar que fuera de pauta el agente redacta igual y advierte, para que el abogado decida entre cumplir o ir a reposición. (Enmienda de producto 2026-09-22.)
 - **RF-05:** El caso «mandamiento con error» debe declarar la comparación campo a campo contra la demanda y que un mandamiento que no calza bloquea el avance a la Etapa 2.
 - **RF-06:** El borrador debe acompañarse de las acciones humanas de corregir y firmar, y de la frase de la especificación: ejecuta siempre un humano.
 - **RF-07:** El tachado solo debe aplicarse al valor que el agente descarta; nunca a un dato correcto.

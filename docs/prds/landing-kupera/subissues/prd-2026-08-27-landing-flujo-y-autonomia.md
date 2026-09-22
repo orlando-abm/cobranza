@@ -21,7 +21,7 @@ Es la sección de confianza. Un abogado no delega criterio jurídico, y el sitio
 
 - [ ] OBJ-01: Implementar la presentación de las tres etapas con el gatillante que abre y cierra cada una.
 - [ ] OBJ-02: Mostrar los relojes de cada plazo perentorio con su gatillante correcto.
-- [ ] OBJ-03: Declarar la matriz de autonomía en tres niveles y hacer explícita la línea roja.
+- [ ] OBJ-03: Declarar la matriz de autonomía en tres niveles y hacer explícita la línea roja: el agente redacta todo y nunca presenta sin aprobación.
 - [ ] OBJ-04: Respetar la autonomía declarada del ticket y derivar a humano cuando corresponda.
 
 ## 3. No-Goals
@@ -49,9 +49,9 @@ Es la sección de confianza. Un abogado no delega criterio jurídico, y el sitio
 - **RF-01:** El sistema debe presentar las etapas de demanda, notificación y embargo con el gatillante de cada una.
 - **RF-02:** Los relojes deben declarar ocho días para excepciones desde el requerimiento de pago, cuatro para traslado, cinco para reposición y alrededor de treinta para la inscripción en el Registro Civil.
 - **RF-03:** Debe quedar explícito que el cuaderno de apremio corre en paralelo y que las excepciones no bloquean el embargo.
-- **RF-04:** La matriz debe usar exclusivamente los niveles AUTOMÁTICO, CON APROBACIÓN y SOLO HUMANO.
-- **RF-05:** La columna SOLO HUMANO debe incluir oposición de excepciones, respuesta a traslados, vehículo transferido, rechazo de inscripción y reposición o apelación.
-- **RF-06:** La línea roja debe declararse de forma destacada: el agente jamás contesta excepciones ni traslados.
+- **RF-04:** La matriz debe declarar tres niveles: lo que el agente ejecuta solo, lo que redacta por el abogado y lo que nunca hace sin su aprobación.
+- **RF-05:** La columna de redacción debe incluir la respuesta a excepciones y traslados con la defensa propuesta, conforme a la enmienda de producto del 2026-09-22. La columna de aprobación debe incluir presentar en el PJUD, firmar, aceptar o cambiar la defensa, vehículo transferido y rechazo de inscripción.
+- **RF-06:** La línea roja debe declararse de forma destacada: el agente redacta todo y nunca presenta ni firma sin aprobación del abogado.
 - **RF-07:** El nivel de autonomía nunca debe comunicarse solo por color; debe acompañarse de texto e icono.
 - **RF-08:** Toda acción debe quedar trazada con causa, documento/fuente, actor y fecha cuando aplique.
 - **RF-09:** La landing no debe publicar hitos de facturación ni porcentajes de cobro: son información comercial que corresponde a una reunión.
@@ -63,8 +63,8 @@ Es la sección de confianza. Un abogado no delega criterio jurídico, y el sitio
 - [ ] AC-01: Las tres etapas aparecen con su gatillante correcto y sin porcentajes de cobro.
 - [ ] AC-02: Los cuatro relojes declaran su plazo y su gatillante conforme a la especificación.
 - [ ] AC-03: El reloj de excepciones se cuenta desde el estampado de requerimiento de pago y no desde la notificación.
-- [ ] AC-04: La matriz muestra los tres niveles con el vocabulario cerrado del proyecto.
-- [ ] AC-05: La línea roja aparece de forma destacada y sin matices.
+- [ ] AC-04: La matriz muestra los tres niveles: ejecuta solo, redacta por ti y nunca sin ti.
+- [ ] AC-05: La línea roja aparece de forma destacada y sin matices, y explica qué ocurre cuando el deudor opone excepciones.
 - [ ] AC-06: El caso queda trazado con fuente o evidencia suficiente para auditoría funcional.
 
 ## 7. Notas de implementación
@@ -73,6 +73,8 @@ Es la sección de confianza. Un abogado no delega criterio jurídico, y el sitio
 - Fase asignada: [F7] Sitio público y captación. Esta fase ordena implementación y prioridad, pero no cambia el slug ni el parent de Linear.
 - El front actual es un prototipo con mock data; los PRDs describen comportamiento funcional esperado para implementación real.
 - Los porcentajes de facturación quedaron fuera de la landing por decisión de producto: no aportan al visitante y adelantan una conversación comercial.
+- La enmienda de producto del 2026-09-22 movió la línea roja: antes el agente no redactaba la defensa; ahora redacta todo y la línea está en no presentar sin aprobación. Ver la enmienda al inicio de la especificación y del skill legal.
+- La pregunta frecuente sobre plazos se retiró: el control de plazos se mantiene en la sección del flujo, pero no es el argumento que distingue al producto.
 
 ## 8. Fuera de alcance v1
 

@@ -10,6 +10,17 @@ Lógica de Estados, Scraping del PJUD y Automatización Operativa (Etapas 1-3)
 
 ## Introducción y Principios de Diseño
 
+> ## Enmienda de producto · 2026-09-22
+>
+> **Decisión del fundador que reemplaza la línea roja original sobre redacción.**
+>
+> El agente **redacta todo**, incluida la respuesta a excepciones y traslados: lee el escrito del deudor, propone la defensa y deja el borrador armado. La línea roja ya no está en *qué se redacta* sino en *qué se presenta*: **el agente jamás presenta ni firma sin aprobación humana**.
+>
+> El criterio jurídico y la firma siguen siendo del abogado, que aprueba, corrige o descarta. La alerta de máxima prioridad ante una oposición se mantiene.
+>
+> Las frases de este documento que dicen «jamás responde», «solo humano» o «la respuesta la redacta el abogado» recogen lo pedido por la operadora en el levantamiento y **se conservan como registro de esa reunión**. Para implementar, manda esta enmienda. Si un cliente exige la regla original, se configura por pauta de la financiera.
+
+
 La duración de un juicio ejecutivo de cobranza automotriz suele estar más vinculada a desafíos de gestión y coordinación operativa que a los plazos establecidos por la normativa aplicable, así como a la sobrecarga humana de los estudios jurídicos. Con carteras que promedian entre 300 y 600 causas activas por abogado, el seguimiento manual es materialmente inviable. El Agente de Cobranza Judicial de ProdBooster se inserta directamente en este flujo de trabajo para reducir el ciclo del juicio de su duración actual (18-36 meses) a un ideal óptimo de aproximadamente 6 meses. Al acelerar este proceso, el agente evita pérdidas sustanciales (un abogado con 500 causas pierde aprox. el 5% por descuidos, lo que equivale a unos CLP 175M/año) y permite a las financieras judicializar causas de menor cuantía (bajando el umbral de viabilidad de 50 UF a solo ~25 UF).
 
 Cinco Principios Rectores del Agente
@@ -294,14 +305,14 @@ La matriz define rigurosamente el nivel de autonomía delegada al agente, separa
 | **Acción Procesal**                    | **Nivel de Autonomía** | **Regla de Negocio y Lógica Operativa**                                                                                            |
 |----------------------------------------|------------------------|------------------------------------------------------------------------------------------------------------------------------------|
 | **Ingesta, OCR y validación cruzada**  | AUTOMÁTICO             | Descomprime, asocia y valida por OCR. Score bajo umbral pasa a deudor/revisión humana (~10% de 150).                               |
-| **Redacción de escritos estándar**     | AUTOMÁTICO             | Pre-completa los modelos de demandas y escritos del estudio. Jamás los presenta sin aprobación.                                    |
+| **Redacción de escritos (todos)**      | AUTOMÁTICO             | Redacta de principio a fin los escritos del estudio, incluida la defensa. Jamás los presenta sin aprobación. (Enmienda 2026-09-22.)                                    |
 | **Firma y subida PJUD (OJV)**          | CON APROBACIÓN         | Abogado valida nombres, RUT, monto y financiera. El agente orquesta firmas en las OJV de apoderados. Envío final por patrocinante. |
 | **Clasificación de actuaciones**       | AUTOMÁTICO             | Clasifica mediante el contenido del PDF. Ante baja confianza, lo desvía a la bandeja de revisión humana.                           |
 | **Validación de mandamientos**         | CON APROBACIÓN         | Compara mandamiento contra demanda. Si hay inconsistencia, pre-redacta rectificación para firma.                                   |
 | **Cumplimiento previo a proveer**      | CON APROBACIÓN         | Si la rebaja sugerida por el tribunal está dentro de la pauta de la financiera (baja 10%), pre-redacta escrito.                   |
 | **Mails a receptores y seguimiento**   | AUTOMÁTICO             | Gatilla encargo y follow-up al receptor según base interna. Configurable a modo borrador/aprobación.                               |
 | **Seguimiento CAV y Registro Civil**   | AUTOMÁTICO             | Consulta sistemática de patentes a partir del day 25 en Registro Civil. Alerta confirmación o rechazo.                             |
-| **Excepciones de deudor y Traslados**  | SOLO HUMANO            | **Línea roja.** El agente detecta la defensa, enciende reloj de traslado (4 days) y alerta. Nunca responde autónomo.               |
+| **Excepciones de deudor y Traslados**  | CON APROBACIÓN         | El agente detecta la defensa, enciende reloj de traslado (4 days), alerta y **pre-redacta la respuesta con la defensa propuesta**. El abogado aprueba, corrige o descarta, y firma. (Enmienda 2026-09-22, antes SOLO HUMANO.)               |
 | **Castigos y reasignaciones**          | SOLO HUMANO            | El agente alerta el fin del número de intentos autorizados. La financiera o abogado decide reasignar o castigar.                   |
 | **Documentos ilegibles (OCR fallido)** | SOLO HUMANO            | Si un deudor/humano no puede leerlo, la IA tampoco. Alerta y bypass.                                                               |
 

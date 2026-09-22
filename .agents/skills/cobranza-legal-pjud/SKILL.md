@@ -20,11 +20,27 @@ metadata:
 estados ni automatizaciones que no estén marcados ahí. Si algo no está, es "pendiente / fuera de alcance",
 no se inventa. Confidencial: solo socios e ingenieros ProdBooster.
 
+## Enmienda de producto · 2026-09-22
+
+**Decisión del fundador que reemplaza la línea roja original sobre redacción.**
+
+El agente **redacta todo**, incluida la respuesta a excepciones y traslados: lee el escrito del
+deudor, propone la defensa y deja el borrador armado. La línea roja ya no está en *qué se redacta*
+sino en *qué se presenta*: **el agente jamás presenta ni firma sin aprobación humana**.
+
+Lo que no cambia: el criterio jurídico y la firma siguen siendo del abogado, que aprueba, corrige o
+descarta el borrador. La alerta de máxima prioridad ante una oposición se mantiene.
+
+Los textos de la especificación que dicen «jamás responde» o «la respuesta la redacta el abogado»
+recogen lo pedido por la operadora en el levantamiento y se conservan como registro histórico; para
+implementar, manda esta enmienda. Si un cliente exige la regla original, se configura por pauta.
+
 ## Principios rectores (líneas rojas incluidas)
 
-1. **El agente acelera, el humano decide.** El agente automatiza el ‘tiempo hormiga’ (~90%). El criterio
-   legal (oposición de excepciones, defensas) es SOLO del abogado. **Línea roja: el agente jamás contesta
-   excepciones ni traslados de forma autónoma.**
+1. **El agente redacta, el humano decide.** El agente automatiza el ‘tiempo hormiga’ (~90%) y además
+   redacta los escritos de principio a fin, incluida la defensa. El criterio legal sigue siendo del
+   abogado, que aprueba, corrige o descarta. **Línea roja: el agente jamás presenta ni firma sin
+   aprobación humana** (ver enmienda 2026-09-22).
 2. **Leer el documento, no el título.** El título del PJUD viene mal etiquetado ~70%. El gatillante se
    extrae del **contenido del PDF**, validado contra la causa — nunca del título.
 3. **Todo plazo tiene un reloj.** Cada plazo perentorio activa un temporizador diario: reposición 5 d,
@@ -114,8 +130,10 @@ legal/avales). El agente compara **campo a campo** contra la demanda; si no calz
   requerimiento de pago** (no de la notificación):
   - **Requerimiento estampado → 8 d** para excepciones. Si expira sin oposición → pre-genera **Certificado de No
     Haberse Opuesto Excepciones** (`cne_20260702220615.pdf`).
-  - **Excepciones opuestas (~20%)** → alerta máxima, **solo humano**, clasifica ‘con excepciones’. Jamás responde.
-  - **Traslado → 4 d** → alerta crítica; respuesta la decide/redacta el abogado (línea roja).
+  - **Excepciones opuestas (~20%)** → alerta máxima y clasifica ‘con excepciones’. El agente **pre-redacta
+    la respuesta con la defensa propuesta**; presentarla requiere aprobación y firma del abogado.
+  - **Traslado → 4 d** → alerta crítica; el agente pre-redacta la respuesta y el abogado la decide, la
+    corrige y la firma.
   - **Reposición → 5 d** → reloj + alerta; pre-redacción solo si hay plantilla aprobada.
 
 ## Etapa 3 — Embargo
@@ -155,7 +173,7 @@ Se rige por **contenido del PDF**, no por títulos. Todo gatillante de avance re
 | **Estampado: búsqueda negativa** | Principal | Contenido + calce | NO avanza → consume intento; cruzar pauta; al límite alerta |
 | **Requerimiento de pago** | Apremio | Distinguir de notificación | SÍ → reloj 8 d excepciones (desde el requerimiento) |
 | **Excepciones opuestas** | Apremio | Detección de escrito del deudor | SÍ → alerta máxima, **solo humano**; clasifica ‘con excepciones’ |
-| **‘Traslado’** | Apremio | Detección de traslado | SÍ → reloj 4 d; respuesta la decide el abogado (línea roja) |
+| **‘Traslado’** | Apremio | Detección de traslado | SÍ → reloj 4 d; el agente pre-redacta, el abogado decide y firma |
 | **Tribunal exige CAV previo** | Principal y/o mail receptor | Leer resolución/mail | **BLOQUEA embargo** → pedir CAV del mes, presentar, re-encargar |
 | **Comprobante ingreso Registro Civil** | Principal | Leer contenido | NO gatilla → solo arranca reloj ~1 mes (‘en trámite de inscripción’) |
 | **‘Inscripción aceptada’** | Registro Civil (patente) | Consulta desde d25 cada 5-7 d | SÍ → cierre Etapa 3: alerta + mail financiera + escrito martillero. Hito ~15% |
@@ -170,7 +188,7 @@ con Registro Civil (inscripción=gatillante). (4) Baja confianza → cola humana
 | Acción | Nivel | Regla |
 |---|---|---|
 | Ingesta, OCR y validación cruzada | **AUTOMÁTICO** | Score bajo umbral → revisión humana (~10%) |
-| Redacción de escritos estándar | **AUTOMÁTICO** | Pre-completa; **jamás presenta sin aprobación** |
+| Redacción de escritos (todos) | **AUTOMÁTICO** | Redacta de principio a fin; **jamás presenta sin aprobación** |
 | Firma y subida PJUD (OJV) | **CON APROBACIÓN** | Abogado valida nombres/RUT/monto/financiera; agente orquesta firmas; envío final patrocinante |
 | Clasificación de actuaciones | **AUTOMÁTICO** | Por contenido del PDF; baja confianza → bandeja humana |
 | Validación de mandamientos | **CON APROBACIÓN** | Compara; si difiere, pre-redacta rectificación para firma |

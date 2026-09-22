@@ -18,7 +18,7 @@ Kupera es la empresa; ProdBooster es el venture studio del que nace. El sitio vi
 ## 2. Objetivos
 
 - [ ] OBJ-01: Publicar una landing que explique el flujo del juicio ejecutivo de cobranza automotriz sin simplificarlo ni inventarlo.
-- [ ] OBJ-02: Hacer explícita la matriz de autonomía, incluida la línea roja de que el agente jamás contesta excepciones ni traslados.
+- [ ] OBJ-02: Hacer explícita la matriz de autonomía, incluida la línea roja de que el agente redacta todo pero nunca presenta ni firma sin aprobación del abogado.
 - [ ] OBJ-03: Mostrar al agente interpretando resoluciones del tribunal y dejando el escrito de respuesta redactado para revisión humana.
 - [ ] OBJ-04: Ofrecer dos vías: agendar una demo e ingresar al producto en app.kupera.cl.
 - [ ] OBJ-05: Construir la landing aislada de la aplicación, sin modificar su build, sus rutas ni sus estilos.
