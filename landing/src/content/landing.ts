@@ -69,7 +69,9 @@ export const hero = {
     'presenta sin tu firma.',
   ctaPrimario: 'Agenda una demo',
   ctaSecundario: 'Ingresar a la plataforma',
-  nota: 'Sin integración al PJUD sin tu consentimiento firmado. Ley 21.719.',
+  nota:
+    'La operación sobre sistemas judiciales está sujeta a los mecanismos de autorización, ' +
+    'autenticación y consentimiento que correspondan. Ley 21.719.',
 } as const;
 
 /**
@@ -125,7 +127,7 @@ export const procurador = {
         filas: [
           { campo: 'Qué piden', valor: 'Bajar el monto demandado: el tribunal no considera los intereses entre cuotas' },
           { campo: 'Plazo', valor: 'Dentro de quinto día · reloj corriendo desde el día 0' },
-          { campo: 'Pauta de la financiera', valor: 'Rebaja de hasta 10% con tope de CLP 500.000' },
+          { campo: 'Pauta de la financiera', valor: 'En este caso, rebaja de hasta 10% con tope de CLP 500.000' },
           { campo: 'Veredicto', valor: 'El ajuste cabe en la pauta. Se pre-redacta el escrito.' },
         ],
         alterno:
@@ -167,7 +169,7 @@ export const procurador = {
         filas: [
           { campo: 'Comparación', valor: 'Campo a campo contra la demanda: nombre completo, financiera, monto, representante legal y avales' },
           { campo: 'Diferencia', valor: 'Falta un cero en el monto. El resto de los campos calza.' },
-          { campo: 'Frecuencia', valor: 'Cerca del 20% de los mandamientos llega con error' },
+          { campo: 'Frecuencia', valor: 'Un mandamiento puede llegar con diferencias respecto de la demanda' },
           { campo: 'Veredicto', valor: 'No calza. Se bloquea el avance a la Etapa 2 y se pre-redacta la rectificación.' },
         ],
         alterno:
@@ -192,35 +194,36 @@ export const tension = {
   title: 'El juicio no se atrasa por criterio.',
   titleTail: 'Se atrasa por trámite.',
   lead:
-    'Seguir cientos de causas a mano produce atrasos, omisiones y pérdida de recuperación. ' +
-    'No porque falte abogado, sino porque el trabajo hormiga no escala.',
+    'Una cartera de cientos o miles de causas exige revisar permanentemente resoluciones, ' +
+    'documentos, diligencias, inscripciones y plazos. El problema no está en la falta de criterio ' +
+    'jurídico, sino en la cantidad de trabajo operativo que hay que ejecutar para poder ejercerlo a ' +
+    'tiempo.',
+  /* Sin cifras de mercado: no son verificables públicamente y la revisión legal las retiró.
+     Cada tarjeta describe un tipo de trabajo, no una estadística. */
   datos: [
     {
-      cifra: 70,
-      sufijo: '%',
-      titulo: 'de las actuaciones del PJUD viene mal etiquetada',
+      rotulo: 'Lectura',
+      titulo: 'El título no dice lo que dice el documento',
       detalle:
-        'El título no dice lo que dice el documento. Hay que abrir el PDF y leerlo completo ' +
-        'para saber qué pasó en la causa.',
+        'Las actuaciones registradas en los sistemas judiciales no siempre permiten determinar, por ' +
+        'su denominación, qué ocurrió en la causa. Hay que abrir el documento y leerlo.',
     },
     {
-      cifra: 30,
-      sufijo: '%',
-      titulo: 'de los embargos se atasca en el Registro Civil',
+      rotulo: 'Diligencias',
+      titulo: 'La diligencia no termina con el acta',
       detalle:
-        'Por no revisar el CAV a tiempo. Otro 10% no se revisa nunca y el embargo queda ' +
-        'sin inscribir.',
+        'Hay que verificar el resultado, la documentación que lo acredita y las actuaciones ' +
+        'posteriores necesarias para avanzar en la ejecución. Ahí se pierden causas.',
     },
     {
-      cifra: 8,
-      sufijo: ' días',
-      titulo: 'para oponer excepciones desde el requerimiento',
+      rotulo: 'Plazos',
+      titulo: 'Los plazos no deberían depender de una revisión manual',
       detalle:
-        'Y cuatro para el traslado, cinco para la reposición. Un plazo perentorio que se pasa ' +
-        'no se recupera.',
+        'El procedimiento ejecutivo contiene distintos plazos y cargas que deben identificarse y ' +
+        'controlarse según la actuación que los origina y las reglas aplicables.',
     },
   ],
-  remate: 'El agente automatiza el tiempo hormiga. El criterio legal no se delega.',
+  remate: 'El agente ejecuta la carga operativa. El criterio jurídico no se delega.',
 } as const;
 
 /**
@@ -405,11 +408,15 @@ export const flujo = {
     },
   ],
   relojes: [
-    { plazo: '8 días', desde: 'Excepciones, desde el requerimiento de pago' },
+    { plazo: '8 días', desde: 'Excepciones, desde el requerimiento de pago, más los aumentos que correspondan' },
     { plazo: '4 días', desde: 'Traslado' },
     { plazo: '5 días', desde: 'Reposición' },
     { plazo: '~30 días', desde: 'Inscripción en el Registro Civil' },
   ],
+  notaPlazos:
+    'Los plazos que muestra la plataforma son mecanismos de control y alerta. El profesional ' +
+    'responsable debe verificarlos según la naturaleza de la actuación, la forma de notificación y ' +
+    'las circunstancias particulares de cada causa.',
   paralelo: {
     titulo: 'El cuaderno de apremio corre en paralelo',
     detalle:
