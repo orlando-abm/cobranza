@@ -1,0 +1,49 @@
+---
+/**
+ * Preguntas frecuentes en formato pregunta-respuesta. Se renderizan como
+ * <details> nativos: funcionan sin JavaScript y el texto de la respuesta viaja
+ * siempre en el HTML, así que buscadores y asistentes lo extraen aunque el
+ * bloque esté cerrado. La primera queda abierta.
+ */
+import { faq } from '../../content/landing';
+import Section from '../ui/Section.astro';
+import Reveal from '../ui/Reveal.astro';
+import MovementHeader from '../ui/MovementHeader.astro';
+
+interface Props {
+  folio: string;
+}
+const { folio } = Astro.props;
+---
+
+<Section id="preguntas" folio={folio} labelledby="preguntas-titulo">
+  <MovementHeader
+    id="preguntas-titulo"
+    eyebrow={faq.eyebrow}
+    title={faq.title}
+    titleTail={faq.titleTail}
+  />
+
+  <div class="mt-12 grid gap-px overflow-hidden rounded-2xl border border-line bg-line">
+    {
+      faq.items.map((item, i) => (
+        <Reveal delay={Math.min(i, 5) * 60}>
+          <details class="group/faq h-full bg-ink" open={i === 0} data-faq>
+            <summary class="flex cursor-pointer list-none items-start gap-4 p-6 text-cream transition-colors duration-200 hover:bg-surface/30 sm:p-7 [&::-webkit-details-marker]:hidden">
+              <h3 class="flex-1 text-[1.0625rem] font-semibold">{item.pregunta}</h3>
+              <span
+                aria-hidden="true"
+                class="mt-1 grid h-5 w-5 shrink-0 place-items-center rounded-full border border-line-hi text-brass-hi transition-transform duration-300 group-open/faq:rotate-45"
+              >
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M5 1v8M1 5h8" stroke-linecap="round" />
+                </svg>
+              </span>
+            </summary>
+            <p class="max-w-3xl px-6 pb-6 text-[0.9375rem] text-muted sm:px-7 sm:pb-7">{item.respuesta}</p>
+          </details>
+        </Reveal>
+      ))
+    }
+  </div>
+</Section>

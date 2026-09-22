@@ -101,9 +101,24 @@ const grupos = [
       ['Fundador con perfil de LinkedIn enlazado', linkedinValido],
       ['Correo de contacto publicado', /href="mailto:[^"@]+@[^"]+"/.test(html)],
       ['Razón social publicada', /data-legal[\s\S]*Razón social:/.test(html)],
-      ['RUT publicado', /data-legal/.test(html) && RUT.test(visible)],
-      ['Domicilio publicado', /data-legal[\s\S]*Domicilio:/.test(html)],
       ['Enlace al venture studio', html.includes('href="https://www.prodbooster.com"')],
+    ],
+  },
+  {
+    // El skill seo-aeo-best-practices: pares pregunta-respuesta visibles son el
+    // formato que mejor extraen los buscadores y los asistentes de IA.
+    titulo: 'Legibilidad para buscadores y asistentes',
+    reglas: [
+      ['Preguntas frecuentes visibles en el HTML', (html.match(/<summary\b/g) ?? []).length >= 5],
+      ['FAQPage declarado', /"@type":"FAQPage"/.test(html)],
+      [
+        'Cada pregunta del marcado existe en la página',
+        (() => {
+          const m = html.match(/"@type":"Question","name":"([^"]+)"/g) ?? [];
+          return m.length > 0 && m.every((q) => visible.includes(q.split('"name":"')[1].slice(0, -1)));
+        })(),
+      ],
+      ['Señal de frescura (dateModified)', /"dateModified"/.test(html)],
     ],
   },
   {
@@ -112,8 +127,18 @@ const grupos = [
       ['Sin voseo', !VOSEO.test(visible), visible.match(VOSEO)?.[0] ?? ''],
       ['Sin hitos ni porcentajes de cobro', !/hito[s]? de (cobro|facturaci)/i.test(visible)],
       ['Un solo h1', (html.match(/<h1[\s>]/g) ?? []).length === 1],
+      [
+        'Sin texto pegado a un enlace',
+        !/[a-záéíóúñ]<a[\s>]/i.test(html),
+        (html.match(/.{12}[a-záéíóúñ]<a[\s>]/i) ?? [''])[0],
+      ],
     ],
   },
+];
+
+const opcionales = [
+  ['RUT publicado', /data-legal/.test(html) && RUT.test(visible)],
+  ['Domicilio publicado', /data-legal[\s\S]*Domicilio:/.test(html)],
 ];
 
 let fallas = 0;
@@ -127,6 +152,10 @@ for (const grupo of grupos) {
   }
   console.log('');
 }
+
+console.log('Opcionales (no bloquean la publicación)');
+for (const [nombre, ok] of opcionales) console.log(`  ${ok ? '✓' : '·'} ${nombre}`);
+console.log('');
 
 if (fallas === 0) {
   console.log('Cumple todos los criterios.\n');

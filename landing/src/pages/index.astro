@@ -9,6 +9,7 @@ import Producto from '../components/sections/Producto.astro';
 import CausaDeEjemplo from '../components/sections/CausaDeEjemplo.astro';
 import FlujoCompleto from '../components/sections/FlujoCompleto.astro';
 import MatrizAutonomia from '../components/sections/MatrizAutonomia.astro';
+import Faq from '../components/sections/Faq.astro';
 import Equipo from '../components/sections/Equipo.astro';
 import Contacto from '../components/sections/Contacto.astro';
 import Footer from '../components/sections/Footer.astro';
@@ -16,7 +17,7 @@ import Connector from '../components/ui/Connector.astro';
 import NoiseOverlay from '../components/ui/NoiseOverlay.astro';
 
 // Folios correlativos según las secciones que efectivamente se muestran.
-const orden = ['tension', 'procurador', ...(producto.capturas.length ? ['producto'] : []), 'causa', 'flujo', 'autonomia', 'equipo', 'contacto'];
+const orden = ['tension', 'procurador', ...(producto.capturas.length ? ['producto'] : []), 'causa', 'flujo', 'autonomia', 'preguntas', 'equipo', 'contacto'];
 const folio = (id: string) => String(orden.indexOf(id) + 2).padStart(2, '0');
 ---
 
@@ -34,6 +35,7 @@ const folio = (id: string) => String(orden.indexOf(id) + 2).padStart(2, '0');
     <FlujoCompleto folio={folio('flujo')} />
     <Connector />
     <MatrizAutonomia folio={folio('autonomia')} />
+    <Faq folio={folio('preguntas')} />
     <Equipo folio={folio('equipo')} />
     <Contacto folio={folio('contacto')} />
   </main>

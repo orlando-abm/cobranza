@@ -18,6 +18,7 @@ export interface Empresa {
   nombre: string;
   descriptor: string;
   razonSocial: string | null;
+  /** Opcionales: no se publican en la landing si quedan en null. */
   rut: string | null;
   domicilio: string | null;
   contacto: string | null;
@@ -28,10 +29,10 @@ export interface Empresa {
 export const empresa: Empresa = {
   nombre: 'Kupera',
   descriptor: 'Agente de cobranza judicial automotriz por pagaré',
-  razonSocial: null,
+  razonSocial: 'Kupera SpA',
   rut: null,
   domicilio: null,
-  contacto: null,
+  contacto: 'coyandelp@kupera.cl',
   app: 'https://app.kupera.cl',
   venture: { nombre: 'ProdBooster Venture Studio', url: 'https://www.prodbooster.com' },
 };
@@ -526,12 +527,66 @@ export const equipo: {
       cargo: 'Fundador y CEO',
       linea: 'Lidera la estrategia de producto y la dirección de la compañía.',
       iniciales: 'CO',
-      linkedin: null,
+      linkedin: 'https://www.linkedin.com/in/crist%C3%B3bal-oyanedel-1464121b3/',
       foto: null,
     },
   ],
   perfil: 'Perfil en LinkedIn',
 };
+
+/**
+ * Preguntas frecuentes. Formato pregunta-respuesta porque es el que mejor
+ * extraen los buscadores y los asistentes de IA, y porque son las dudas reales
+ * de un abogado antes de delegar trámite. Cada respuesta parte con la respuesta
+ * directa y recién después explica. Todo sale de la especificación legal.
+ */
+export const faq = {
+  eyebrow: 'Preguntas frecuentes',
+  title: 'Lo que pregunta',
+  titleTail: 'todo estudio antes de partir.',
+  items: [
+    {
+      pregunta: '¿Qué es Kupera?',
+      respuesta:
+        'Kupera es un agente de cobranza judicial automotriz por pagaré para estudios jurídicos en Chile. Lee el lote que asigna la financiera, valida los documentos, redacta la demanda, interpreta las resoluciones del tribunal y controla los plazos del juicio ejecutivo. El abogado revisa, corrige y firma.',
+    },
+    {
+      pregunta: '¿El agente puede contestar excepciones o traslados?',
+      respuesta:
+        'No. El agente jamás contesta excepciones ni traslados. Cuando aparece una oposición sube la alerta al máximo, clasifica la causa y se detiene. La defensa la escribe el abogado.',
+    },
+    {
+      pregunta: '¿Qué hace solo y qué necesita aprobación?',
+      respuesta:
+        'Ejecuta solo lo que no tiene criterio jurídico: descomprimir el lote, validar los cuatro documentos mandatorios, leer el contenido de las actuaciones del PJUD, controlar los relojes de plazo y consultar la inscripción en el Registro Civil. Requiere aprobación para redactar la demanda, subirla al PJUD, elegir receptor y firmar cualquier escrito.',
+    },
+    {
+      pregunta: '¿Qué plazos del juicio ejecutivo controla?',
+      respuesta:
+        'Ocho días para oponer excepciones contados desde el requerimiento de pago, cuatro días para el traslado, cinco para la reposición y alrededor de treinta días para la inscripción del embargo en el Registro Civil. Cada plazo perentorio abre un temporizador diario.',
+    },
+    {
+      pregunta: '¿Qué documentos necesita para preparar una demanda?',
+      respuesta:
+        'Los cuatro documentos mandatorios: el pagaré, el CAV inicial, la tabla de desarrollo o el prepago, y el mandato de la financiera. Si falta uno, la demanda queda marcada como documentación incompleta y no avanza.',
+    },
+    {
+      pregunta: '¿Cuándo queda realmente inscrito un embargo de vehículo?',
+      respuesta:
+        'Cuando el Registro Civil marca la inscripción como aceptada. El comprobante de ingreso que el receptor sube al PJUD solo arranca el reloj de aproximadamente un mes: tratarlo como embargo terminado es el error que deja causas sin inscribir.',
+    },
+    {
+      pregunta: '¿Cómo se maneja la clave del PJUD del estudio?',
+      respuesta:
+        'Con consentimiento firmado del abogado antes de operar, y trazabilidad de cada acción, conforme a la Ley 21.719. El manejo de sesión es conservador: ante un error de acceso el agente se detiene y alerta, nunca reintenta en bucle.',
+    },
+    {
+      pregunta: '¿Kupera reemplaza al estudio jurídico?',
+      respuesta:
+        'No. Kupera automatiza el trabajo hormiga del trámite para que el estudio lleve más causas sin perder control. El criterio legal, la firma y la relación con la financiera siguen siendo del estudio.',
+    },
+  ],
+} as const;
 
 export const cta = {
   eyebrow: 'Conversemos',
@@ -569,6 +624,7 @@ export const footer = {
     {
       titulo: 'Empresa',
       links: [
+        { href: '#preguntas', label: 'Preguntas frecuentes' },
         { href: '#equipo', label: 'Equipo' },
         { href: '#contacto', label: 'Contacto' },
         { href: empresa.app, label: 'Ingresar a la plataforma' },

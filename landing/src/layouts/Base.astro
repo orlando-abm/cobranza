@@ -3,7 +3,7 @@ import frauncesUrl from '@fontsource-variable/fraunces/files/fraunces-latin-wght
 import interUrl from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
 import monoUrl from '@fontsource-variable/jetbrains-mono/files/jetbrains-mono-latin-wght-normal.woff2?url';
 import '../styles/landing.css';
-import { empresa, equipo, nav, seo } from '../content/landing';
+import { empresa, equipo, faq, nav, seo } from '../content/landing';
 import { INDEXABLE, abs } from '../lib/site';
 
 const canonical = abs('/');
@@ -53,6 +53,9 @@ const organizacion: Record<string, unknown> = {
     : {}),
 };
 
+// Fecha de publicación del build: señal de frescura para buscadores y asistentes.
+const actualizado = new Date().toISOString().slice(0, 10);
+
 const jsonLd = {
   '@context': 'https://schema.org',
   '@graph': [
@@ -74,6 +77,29 @@ const jsonLd = {
       inLanguage: 'es-CL',
       publisher: { '@id': abs('/#organization') },
       description: seo.description,
+    },
+    {
+      '@type': 'WebPage',
+      '@id': abs('/#webpage'),
+      url: canonical,
+      name: seo.title,
+      description: seo.description,
+      inLanguage: 'es-CL',
+      isPartOf: { '@id': abs('/#website') },
+      dateModified: actualizado,
+    },
+    // FAQPage solo porque las preguntas y respuestas están visibles en la página:
+    // declarar preguntas que no existen es marcado engañoso.
+    {
+      '@type': 'FAQPage',
+      '@id': abs('/#faq'),
+      inLanguage: 'es-CL',
+      isPartOf: { '@id': abs('/#website') },
+      mainEntity: faq.items.map((item) => ({
+        '@type': 'Question',
+        name: item.pregunta,
+        acceptedAnswer: { '@type': 'Answer', text: item.respuesta },
+      })),
     },
   ],
 };
